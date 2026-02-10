@@ -11,33 +11,33 @@
     }
 
     body {
-      height: 100vh;
       margin: 0;
+      height: 100vh;
       display: flex;
-      justify-content: center;
       align-items: center;
-      background: radial-gradient(circle at top, #ff9a9e, #ff6f91);
-      font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      justify-content: center;
+      background: linear-gradient(135deg, #ff6f91, #ff9a9e);
+      font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       color: white;
       overflow: hidden;
     }
 
     .card {
-      background: rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(14px);
-      padding: 42px 32px;
-      border-radius: 28px;
       width: 92%;
       max-width: 420px;
-      box-shadow: 0 30px 60px rgba(0,0,0,0.25);
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(18px);
+      border-radius: 30px;
+      padding: 44px 32px;
       text-align: center;
-      animation: floatIn 0.9s ease;
+      box-shadow: 0 35px 70px rgba(0,0,0,0.3);
+      animation: appear 0.9s ease;
     }
 
-    @keyframes floatIn {
+    @keyframes appear {
       from {
         opacity: 0;
-        transform: translateY(25px) scale(0.95);
+        transform: translateY(35px) scale(0.95);
       }
       to {
         opacity: 1;
@@ -46,72 +46,84 @@
     }
 
     .profile-pic {
-      width: 150px;
-      height: 150px;
+      width: 155px;
+      height: 155px;
       border-radius: 50%;
       object-fit: cover;
       margin-bottom: 22px;
-      border: 4px solid rgba(255,255,255,0.6);
-      box-shadow: 0 15px 35px rgba(255,255,255,0.35);
+      border: 4px solid rgba(255,255,255,0.75);
+      box-shadow: 0 18px 40px rgba(255,255,255,0.45);
     }
 
     h1 {
-      font-size: 2.2rem;
+      font-size: 2.25rem;
       margin-bottom: 12px;
     }
 
-    .pickup-line {
+    .pickup {
       font-size: 1.05rem;
-      margin-bottom: 28px;
+      line-height: 1.55;
+      margin-bottom: 30px;
       opacity: 0.95;
-      line-height: 1.5;
     }
 
     .buttons {
       position: relative;
-      height: 80px;
+      height: 90px;
     }
 
     button {
-      padding: 14px 30px;
+      padding: 14px 32px;
       font-size: 1.1rem;
       border-radius: 999px;
       border: none;
       cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      user-select: none;
     }
 
     #yesBtn {
-      background: linear-gradient(135deg, #ff4d6d, #ff1f4b);
+      background: linear-gradient(135deg, #ff2f6d, #ff1744);
       color: white;
-      box-shadow: 0 12px 25px rgba(255,77,109,0.45);
+      box-shadow: 0 14px 28px rgba(255,47,109,0.55);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
 
     #yesBtn:hover {
       transform: scale(1.08);
-      box-shadow: 0 18px 35px rgba(255,77,109,0.6);
+      box-shadow: 0 20px 40px rgba(255,47,109,0.7);
     }
 
     #noBtn {
       background: white;
-      color: #ff4d6d;
+      color: #ff2f6d;
       position: absolute;
       left: 55%;
       top: 0;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      box-shadow: 0 12px 22px rgba(0,0,0,0.25);
     }
 
-    .love-screen {
+    .love {
       display: none;
-      animation: fadeIn 1.2s ease forwards;
+      animation: fadeUp 1.2s ease forwards;
     }
 
-    .love-screen h2 {
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .love h2 {
       font-size: 2.1rem;
       margin-bottom: 14px;
     }
 
-    .love-screen p {
+    .love p {
       font-size: 1.1rem;
       line-height: 1.7;
     }
@@ -119,19 +131,7 @@
     .signature {
       margin-top: 26px;
       font-style: italic;
-      font-size: 1.15rem;
       opacity: 0.95;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(18px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
     }
   </style>
 </head>
@@ -140,29 +140,28 @@
 
   <div class="card">
 
-    <!-- FIXED IMAGE PATH -->
-    <img src="images/sahara.jpg" alt="Sahara Chloe Kirkman" class="profile-pic" />
+    <!-- IMAGE FROM ROOT -->
+    <img src="sahara.jpg" alt="Sahara Chloe Kirkman" class="profile-pic" />
 
     <h1 id="question">Will you be my Valentine? 💖</h1>
 
-    <p class="pickup-line">
+    <p class="pickup">
       Do you believe in fate?<br>
       Because this page was coded to end with you saying yes 😏💘
     </p>
 
     <div class="buttons" id="buttons">
-      <button id="yesBtn">Yes 💖</button>
+      <button id="yesBtn">Yes 💕</button>
       <button id="noBtn">No 😅</button>
     </div>
 
-    <div class="love-screen" id="loveScreen">
-      <h2>Sahara Chloe Kirkman 💕</h2>
+    <div class="love" id="love">
+      <h2>Sahara Chloe Kirkman 💗</h2>
       <p>
         Thank you for saying yes, my love.<br>
         You make my days brighter and my smiles wider.<br>
         I can’t wait to make beautiful memories with you this Valentine’s.
       </p>
-
       <p class="signature">
         Always yours,<br>❤️
       </p>
@@ -175,17 +174,17 @@
     const yesBtn = document.getElementById("yesBtn");
     const buttons = document.getElementById("buttons");
     const question = document.getElementById("question");
-    const loveScreen = document.getElementById("loveScreen");
+    const love = document.getElementById("love");
 
-    // FAST & CHAOTIC NO BUTTON 😈
+    // NO BUTTON: FAR + FAST + UNESCAPABLE 😈
     noBtn.addEventListener("mouseenter", () => {
-      const maxX = buttons.offsetWidth - noBtn.offsetWidth;
-      const maxY = buttons.offsetHeight - noBtn.offsetHeight;
+      const viewportWidth = window.innerWidth - noBtn.offsetWidth;
+      const viewportHeight = window.innerHeight - noBtn.offsetHeight;
 
-      const x = Math.random() * maxX;
-      const y = Math.random() * maxY;
+      const x = Math.random() * viewportWidth;
+      const y = Math.random() * viewportHeight;
 
-      noBtn.style.transition = "none"; // instant jump
+      noBtn.style.transition = "none"; // instant teleport
       noBtn.style.left = x + "px";
       noBtn.style.top = y + "px";
     });
@@ -193,7 +192,7 @@
     yesBtn.addEventListener("click", () => {
       question.style.display = "none";
       buttons.style.display = "none";
-      loveScreen.style.display = "block";
+      love.style.display = "block";
     });
   </script>
 
