@@ -17,7 +17,7 @@
       align-items: center;
       justify-content: center;
       background: linear-gradient(135deg, #ff6f91, #ff9a9e);
-      font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: white;
       overflow: hidden;
     }
@@ -69,7 +69,7 @@
 
     .buttons {
       position: relative;
-      height: 90px;
+      height: 100px;
     }
 
     button {
@@ -140,14 +140,13 @@
 
   <div class="card">
 
-    <!-- IMAGE FROM ROOT -->
-    <img src="sahara.jpg" alt="Sahara Chloe Kirkman" class="profile-pic" />
+    <!-- CACHE-BUSTED IMAGE (THIS IS THE FIX) -->
+    <img src="sahara.jpg?v=3" alt="Sahara Chloe Kirkman" class="profile-pic" />
 
     <h1 id="question">Will you be my Valentine? 💖</h1>
 
     <p class="pickup">
-      Do you believe in fate?<br>
-      Because this page was coded to end with you saying yes 😏💘
+      I made this unfair on purpose 😌
     </p>
 
     <div class="buttons" id="buttons">
@@ -160,7 +159,7 @@
       <p>
         Thank you for saying yes, my love.<br>
         You make my days brighter and my smiles wider.<br>
-        I can’t wait to make beautiful memories with you this Valentine’s day and please keep beating sense into me as I'm clumsy af.
+        I can’t wait to make beautiful memories with you this Valentine’s.
       </p>
       <p class="signature">
         Always yours,<br>❤️
@@ -172,21 +171,18 @@
   <script>
     const noBtn = document.getElementById("noBtn");
     const yesBtn = document.getElementById("yesBtn");
-    const buttons = document.getElementById("buttons");
     const question = document.getElementById("question");
+    const buttons = document.getElementById("buttons");
     const love = document.getElementById("love");
 
-    // NO BUTTON: FAR + FAST + UNESCAPABLE 😈
+    // NO BUTTON: FAR + FAST + UNAVOIDABLE
     noBtn.addEventListener("mouseenter", () => {
-      const viewportWidth = window.innerWidth - noBtn.offsetWidth;
-      const viewportHeight = window.innerHeight - noBtn.offsetHeight;
+      const maxX = window.innerWidth - noBtn.offsetWidth;
+      const maxY = window.innerHeight - noBtn.offsetHeight;
 
-      const x = Math.random() * viewportWidth;
-      const y = Math.random() * viewportHeight;
-
-      noBtn.style.transition = "none"; // instant teleport
-      noBtn.style.left = x + "px";
-      noBtn.style.top = y + "px";
+      noBtn.style.transition = "none";
+      noBtn.style.left = Math.random() * maxX + "px";
+      noBtn.style.top = Math.random() * maxY + "px";
     });
 
     yesBtn.addEventListener("click", () => {
