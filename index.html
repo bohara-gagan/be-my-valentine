@@ -175,13 +175,13 @@
     .tiny-note{
       font-size: 0.95rem;
       opacity: 0.9;
-      margin: 0 0 22px;
+      margin: 0 0 16px;
       min-height: 1.2em;
     }
 
     .buttons{
       position: relative;
-      height: 140px;
+      height: 150px;
       margin-top: 6px;
       display: flex;
       align-items: center;
@@ -204,12 +204,8 @@
       box-shadow: 0 14px 28px rgba(255,47,109,0.55);
       transition: transform 0.15s ease, box-shadow 0.15s ease;
       z-index: 2;
-      position: relative;
     }
-    #yesBtn:hover{
-      transform: scale(1.08);
-      box-shadow: 0 20px 40px rgba(255,47,109,0.7);
-    }
+    #yesBtn:hover{ transform: scale(1.08); }
 
     #noBtn{
       background: white;
@@ -224,16 +220,7 @@
       transform: scale(var(--noScale, 1));
     }
 
-    @keyframes panicShake {
-      0%   { transform: translateX(0) rotate(0deg) scale(var(--noScale, 1)); }
-      20%  { transform: translateX(-3px) rotate(-2deg) scale(var(--noScale, 1)); }
-      40%  { transform: translateX(3px) rotate(2deg) scale(var(--noScale, 1)); }
-      60%  { transform: translateX(-2px) rotate(-1deg) scale(var(--noScale, 1)); }
-      80%  { transform: translateX(2px) rotate(1deg) scale(var(--noScale, 1)); }
-      100% { transform: translateX(0) rotate(0deg) scale(var(--noScale, 1)); }
-    }
-    .panic{ animation: panicShake 130ms ease-in-out 2; }
-
+    /* Poof vanish */
     @keyframes poofVanish {
       0%   { transform: scale(var(--noScale, 1)); opacity: 1; filter: blur(0); }
       55%  { transform: scale(0.7); opacity: 0.75; filter: blur(0.2px); }
@@ -274,6 +261,7 @@
       100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.2); opacity: 0; }
     }
 
+    /* Confetti */
     .confetti {
       position: fixed;
       inset: 0;
@@ -343,21 +331,21 @@
     }
     .mem p.show{ opacity: 1; transform: translateY(0); }
 
-    /* Fallback play button if browser blocks audio */
-    .music-fallback{
-      margin: 14px auto 0;
-      display: none;
-      gap: 10px;
-      justify-content: center;
-      align-items: center;
+    /* Music button: ALWAYS visible (top area) */
+    .musicBar{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      margin: 0 auto 16px;
+      flex-wrap: wrap;
     }
-    .music-fallback button{
+    .musicBtn{
       padding: 10px 16px;
       font-size: 0.98rem;
       border-radius: 999px;
       border: none;
       cursor: pointer;
-      background: rgba(255,255,255,0.85);
+      background: rgba(255,255,255,0.86);
       color: #ff2f6d;
       box-shadow: 0 12px 22px rgba(0,0,0,0.18);
     }
@@ -367,7 +355,7 @@
 </head>
 
 <body>
-  <!-- song.mp3 must be in same folder as index.html -->
+  <!-- IMPORTANT: song.mp3 must exist in repo root beside index.html -->
   <audio id="bgMusic" preload="auto" loop>
     <source src="song.mp3" type="audio/mpeg" />
   </audio>
@@ -376,6 +364,7 @@
 
   <div class="page">
     <div class="card">
+
       <div class="photo-wrap">
         <img src="sahara.jpg" alt="Sahara" class="profile-pic" />
         <div class="mini-photos">
@@ -394,8 +383,13 @@
         <span><b id="cdSecs">--</b>s</span>
       </div>
 
-      <h1 id="question">Will you be my Valentine? 💖</h1>
+      <!-- ALWAYS visible music controls -->
+      <div class="musicBar">
+        <button class="musicBtn" id="playMusicBtn" type="button">▶ Play song</button>
+        <button class="musicBtn" id="pauseMusicBtn" type="button">⏸ Pause</button>
+      </div>
 
+      <h1 id="question">Will you be my Valentine? 💖</h1>
       <p class="pickup" id="pickupText">I made this unfair on purpose 😌</p>
       <p class="tiny-note" id="noteText"></p>
 
@@ -418,288 +412,274 @@
           <p id="memLine"></p>
         </div>
 
-        <div class="music-fallback" id="musicFallback">
-          <span>🎵</span>
-          <button id="playMusicBtn" type="button">Tap to play music</button>
-        </div>
-
         <p class="signature">
           Always yours,<br>
           <strong>Gagan</strong><br>
           ❤️
         </p>
       </div>
+
     </div>
   </div>
 
   <script>
-    // Run after DOM is ready (prevents “buttons not working” issues)
-    document.addEventListener("DOMContentLoaded", () => {
-      const noBtn = document.getElementById("noBtn");
-      const yesBtn = document.getElementById("yesBtn");
-      const question = document.getElementById("question");
-      const buttons = document.getElementById("buttons");
-      const love = document.getElementById("love");
-      const pickupText = document.getElementById("pickupText");
-      const noteText = document.getElementById("noteText");
-      const heartsLayer = document.getElementById("hearts");
-      const bgMusic = document.getElementById("bgMusic");
+    // Quick debug: if JS is running, you’ll see this in console
+    console.log("✅ Script loaded");
 
-      const cdDays = document.getElementById("cdDays");
-      const cdHours = document.getElementById("cdHours");
-      const cdMins = document.getElementById("cdMins");
-      const cdSecs = document.getElementById("cdSecs");
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const question = document.getElementById("question");
+    const buttons = document.getElementById("buttons");
+    const love = document.getElementById("love");
+    const pickupText = document.getElementById("pickupText");
+    const noteText = document.getElementById("noteText");
+    const heartsLayer = document.getElementById("hearts");
+    const bgMusic = document.getElementById("bgMusic");
 
-      const memLine = document.getElementById("memLine");
-      const musicFallback = document.getElementById("musicFallback");
-      const playMusicBtn = document.getElementById("playMusicBtn");
+    const playMusicBtn = document.getElementById("playMusicBtn");
+    const pauseMusicBtn = document.getElementById("pauseMusicBtn");
 
-      // -------- Hearts --------
-      const HEARTS = ["💗","💖","💕","💘","💝","💓","✨","🌸"];
-      function createFloatingHeart(){
-        const h = document.createElement("span");
-        h.textContent = HEARTS[Math.floor(Math.random() * HEARTS.length)];
-        const left = Math.random() * 100;
-        const size = 14 + Math.random() * 18;
-        const dur = 5 + Math.random() * 6;
-        const drift = (Math.random() * 90 - 45).toFixed(1) + "px";
+    const cdDays = document.getElementById("cdDays");
+    const cdHours = document.getElementById("cdHours");
+    const cdMins = document.getElementById("cdMins");
+    const cdSecs = document.getElementById("cdSecs");
 
-        h.style.left = left + "vw";
-        h.style.fontSize = size + "px";
-        h.style.animationDuration = dur + "s";
-        h.style.setProperty("--drift", drift);
+    const memLine = document.getElementById("memLine");
 
-        heartsLayer.appendChild(h);
-        setTimeout(() => h.remove(), (dur * 1000) + 200);
+    // ---------- Music buttons ----------
+    async function playMusic(){
+      try{
+        bgMusic.volume = 0.9;
+        await bgMusic.play();
+      }catch(e){
+        alert("Music blocked by browser. Tap Play again or try Chrome/Safari with sound enabled.");
+        console.warn(e);
       }
-      for (let i = 0; i < 16; i++) setTimeout(createFloatingHeart, i * 200);
-      setInterval(createFloatingHeart, 420);
+    }
+    function pauseMusic(){ bgMusic.pause(); }
 
-      // -------- No button dodge (fixed: no auto-spam) --------
-      let dodges = 0;
-      const maxDodges = 7;
-      let vanished = false;
-      let dodgeLocked = false; // ✅ cooldown lock
+    playMusicBtn.addEventListener("click", playMusic);
+    pauseMusicBtn.addEventListener("click", pauseMusic);
 
-      const startScale = 1.0;
-      const endScale = 0.55;
-      function setNoScale(scale){ noBtn.style.setProperty("--noScale", scale); }
-      setNoScale(startScale);
+    // ---------- Floating hearts ----------
+    const HEARTS = ["💗","💖","💕","💘","💝","💓","✨","🌸"];
+    function createFloatingHeart(){
+      const h = document.createElement("span");
+      h.textContent = HEARTS[Math.floor(Math.random() * HEARTS.length)];
+      const left = Math.random() * 100;
+      const size = 14 + Math.random() * 20;
+      const dur = 4 + Math.random() * 5;      // faster
+      const drift = (Math.random() * 140 - 70).toFixed(1) + "px"; // more drift
 
-      function makePoofAtNoButton(){
-        const rect = noBtn.getBoundingClientRect();
-        const poof = document.createElement("div");
-        poof.className = "poof";
-        poof.style.left = (rect.left + rect.width / 2 + window.scrollX) + "px";
-        poof.style.top  = (rect.top + rect.height / 2 + window.scrollY) + "px";
-        for (let i = 0; i < 6; i++) poof.appendChild(document.createElement("span"));
-        document.body.appendChild(poof);
-        setTimeout(() => poof.remove(), 650);
+      h.style.left = left + "vw";
+      h.style.fontSize = size + "px";
+      h.style.animationDuration = dur + "s";
+      h.style.setProperty("--drift", drift);
+
+      heartsLayer.appendChild(h);
+      setTimeout(() => h.remove(), (dur * 1000) + 300);
+    }
+    for (let i = 0; i < 16; i++) setTimeout(createFloatingHeart, i * 160);
+    setInterval(createFloatingHeart, 320);
+
+    // ---------- Confetti ----------
+    function confettiBurst(){
+      const wrap = document.createElement("div");
+      wrap.className = "confetti";
+      const emojis = ["💖","💕","💘","✨","🌸","💗"];
+      const count = 70;
+
+      for(let i=0;i<count;i++){
+        const s = document.createElement("span");
+        s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+        s.style.left = Math.random()*100 + "vw";
+        s.style.animationDelay = (Math.random()*0.18) + "s";
+        s.style.fontSize = (16 + Math.random()*14) + "px";
+        wrap.appendChild(s);
       }
+      document.body.appendChild(wrap);
+      setTimeout(() => wrap.remove(), 1400);
+    }
 
-      function vanishNoButton(){
-        if (vanished) return;
-        vanished = true;
-        noteText.textContent = "Okay okay… you win 😌";
-        makePoofAtNoButton();
-        noBtn.classList.add("fade-out");
-        setTimeout(() => { noBtn.style.display = "none"; }, 450);
-      }
+    // ---------- Poof ----------
+    function makePoofAt(x, y){
+      const poof = document.createElement("div");
+      poof.className = "poof";
+      poof.style.left = (x + window.scrollX) + "px";
+      poof.style.top  = (y + window.scrollY) + "px";
+      for (let i = 0; i < 6; i++) poof.appendChild(document.createElement("span"));
+      document.body.appendChild(poof);
+      setTimeout(() => poof.remove(), 650);
+    }
 
-      function panic(){
-        noBtn.classList.remove("panic");
-        void noBtn.offsetWidth;
-        noBtn.classList.add("panic");
-      }
+    // ---------- No button: FAST + FAR ----------
+    let dodges = 0;
+    const maxDodges = 9;
+    let vanished = false;
 
-      function teleportInsideBox(){
-        if (vanished || dodges >= maxDodges) return;
-        if (dodgeLocked) return;          // ✅ prevents rapid-fire dodges
-        dodgeLocked = true;
-        setTimeout(() => (dodgeLocked = false), 220);
+    const startScale = 1.0;
+    const endScale = 0.55;
+    function setNoScale(scale){ noBtn.style.setProperty("--noScale", scale); }
+    setNoScale(startScale);
 
-        const bw = buttons.clientWidth;
-        const bh = buttons.clientHeight;
+    function vanishNoButton(){
+      if (vanished) return;
+      vanished = true;
+      noteText.textContent = "Okay okay… you win 😌";
 
-        const btnRect = buttons.getBoundingClientRect();
-        const yesRect = yesBtn.getBoundingClientRect();
-        const noRect = noBtn.getBoundingClientRect();
+      const r = noBtn.getBoundingClientRect();
+      makePoofAt(r.left + r.width/2, r.top + r.height/2);
 
-        const maxX = Math.max(0, bw - noRect.width);
-        const maxY = Math.max(0, bh - noRect.height);
+      noBtn.classList.add("fade-out");
+      setTimeout(() => { noBtn.style.display = "none"; }, 450);
+    }
 
-        const avoidRadius = 110;
-        const yesCenterX = (yesRect.left + yesRect.width/2) - btnRect.left;
-        const yesCenterY = (yesRect.top + yesRect.height/2) - btnRect.top;
+    function fastDodge(){
+      if (vanished || dodges >= maxDodges) return;
 
-        let x = 0, y = 0;
-        let tries = 0;
+      const bw = buttons.clientWidth;
+      const bh = buttons.clientHeight;
 
-        while (tries < 20){
-          x = Math.random() * maxX;
-          y = Math.random() * maxY;
+      const btnRect = buttons.getBoundingClientRect();
+      const yesRect = yesBtn.getBoundingClientRect();
+      const noRect = noBtn.getBoundingClientRect();
 
-          const dx = (x + noRect.width/2) - yesCenterX;
-          const dy = (y + noRect.height/2) - yesCenterY;
-          const dist = Math.sqrt(dx*dx + dy*dy);
+      const maxX = Math.max(0, bw - noRect.width);
+      const maxY = Math.max(0, bh - noRect.height);
 
-          if (dist > avoidRadius) break;
-          tries++;
-        }
+      // Make it go FAR by preferring edges away from Yes
+      const yesCenterX = (yesRect.left + yesRect.width/2) - btnRect.left;
+      const yesCenterY = (yesRect.top + yesRect.height/2) - btnRect.top;
 
-        noBtn.style.transition = "left 70ms linear, top 70ms linear";
-        noBtn.style.left = x + "px";
-        noBtn.style.top  = y + "px";
-
-        dodges++;
-
-        const t = dodges / maxDodges;
-        const newScale = startScale + (endScale - startScale) * t;
-        setNoScale(newScale);
-
-        if (dodges >= 3) panic();
-
-        if (dodges === 2) noteText.textContent = "No? really? 😭";
-        if (dodges === 4) noteText.textContent = "It’s literally panicking now 😌";
-        if (dodges === 6) noteText.textContent = "Last last chance 😤";
-
-        if (dodges >= maxDodges) vanishNoButton();
-      }
-
-      // ✅ ONLY these events (no mousemove)
-      noBtn.addEventListener("mouseenter", teleportInsideBox);
-      noBtn.addEventListener("touchstart", (e) => {
-        e.preventDefault();
-        teleportInsideBox();
-      }, { passive: false });
-
-      // -------- Confetti --------
-      function confettiBurst(){
-        const wrap = document.createElement("div");
-        wrap.className = "confetti";
-        const emojis = ["💖","💕","💘","✨","🌸","💗"];
-        const count = 52;
-
-        for(let i=0;i<count;i++){
-          const s = document.createElement("span");
-          s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
-          s.style.left = Math.random()*100 + "vw";
-          s.style.animationDelay = (Math.random()*0.25) + "s";
-          s.style.fontSize = (16 + Math.random()*12) + "px";
-          wrap.appendChild(s);
-        }
-        document.body.appendChild(wrap);
-        setTimeout(() => wrap.remove(), 1400);
+      let best = {x: 0, y: 0, score: -1};
+      for (let i = 0; i < 14; i++){
+        const x = Math.random() * maxX;
+        const y = Math.random() * maxY;
+        const dx = (x + noRect.width/2) - yesCenterX;
+        const dy = (y + noRect.height/2) - yesCenterY;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist > best.score) best = {x, y, score: dist};
       }
 
-      // -------- Memory carousel --------
-      const memories = [
-        "I love your laugh.",
-        "I love how you care.",
-        "I love the way you look at me.",
-        "I love how you roll your eyes at me.",
-        "I love our little moments."
-      ];
+      // SUPER fast move
+      noBtn.style.transition = "left 35ms linear, top 35ms linear";
+      noBtn.style.left = best.x + "px";
+      noBtn.style.top  = best.y + "px";
 
-      function startMemoryCarousel(){
-        let i = 0;
-        memLine.textContent = "";
+      dodges++;
+
+      const t = dodges / maxDodges;
+      setNoScale(startScale + (endScale - startScale) * t);
+
+      if (dodges === 2) noteText.textContent = "No? really? 😭";
+      if (dodges === 5) noteText.textContent = "Bro stop chasing me 😭";
+      if (dodges === 8) noteText.textContent = "Alright I’m gone 😤";
+
+      if (dodges >= maxDodges) vanishNoButton();
+    }
+
+    // Trigger dodge aggressively
+    noBtn.addEventListener("mouseenter", fastDodge);
+    noBtn.addEventListener("pointerenter", fastDodge);
+    noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); fastDodge(); }, { passive:false });
+
+    // ---------- Memory carousel ----------
+    const memories = [
+      "I love your laugh.",
+      "I love how you care.",
+      "I love our little moments.",
+      "I love how you make me feel safe.",
+      "I love you. That’s it."
+    ];
+
+    function startMemoryCarousel(){
+      let i = 0;
+      memLine.textContent = "";
+      memLine.classList.remove("show");
+
+      const showNext = () => {
+        if (i >= memories.length) return;
+
         memLine.classList.remove("show");
+        setTimeout(() => {
+          memLine.textContent = "💗 " + memories[i];
+          memLine.classList.add("show");
+          i++;
+        }, 120);
 
-        const showNext = () => {
-          if (i >= memories.length) return;
-          memLine.classList.remove("show");
-          setTimeout(() => {
-            memLine.textContent = "💗 " + memories[i];
-            memLine.classList.add("show");
-            i++;
-          }, 120);
-          setTimeout(showNext, 1200);
-        };
+        setTimeout(showNext, 1200);
+      };
 
-        showNext();
-      }
+      showNext();
+    }
 
-      // -------- YES click (music + show love) --------
-      async function tryPlayMusic(){
-        try{
-          bgMusic.volume = 0.85;
-          await bgMusic.play();
-          musicFallback.style.display = "none";
-          return true;
-        }catch(e){
-          musicFallback.style.display = "flex"; // show fallback button
-          return false;
-        }
-      }
+    // ---------- YES button (UNBREAKABLE) ----------
+    yesBtn.addEventListener("click", async () => {
+      // Always try music on click
+      await playMusic();
 
-      yesBtn.addEventListener("click", async () => {
-        await tryPlayMusic();
-        confettiBurst();
+      confettiBurst();
 
-        question.style.display = "none";
-        buttons.style.display = "none";
-        pickupText.style.display = "none";
-        noteText.style.display = "none";
-        love.style.display = "block";
+      question.style.display = "none";
+      buttons.style.display = "none";
+      pickupText.style.display = "none";
+      noteText.style.display = "none";
 
-        startMemoryCarousel();
-        love.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
-
-      playMusicBtn.addEventListener("click", tryPlayMusic);
-
-      // -------- Countdown (Sydney time) --------
-      function getSydneyNow(){
-        const parts = new Intl.DateTimeFormat("en-AU", {
-          timeZone: "Australia/Sydney",
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-          hour12: false
-        }).formatToParts(new Date());
-
-        const get = (type) => parts.find(p => p.type === type)?.value;
-        return new Date(
-          Number(get("year")),
-          Number(get("month")) - 1,
-          Number(get("day")),
-          Number(get("hour")),
-          Number(get("minute")),
-          Number(get("second"))
-        );
-      }
-
-      function updateCountdown(){
-        const nowSydney = getSydneyNow();
-        const year = nowSydney.getFullYear();
-
-        let target = new Date(year, 1, 14, 0, 0, 0);
-        if (nowSydney.getTime() >= target.getTime()){
-          target = new Date(year + 1, 1, 14, 0, 0, 0);
-        }
-
-        let diff = target.getTime() - nowSydney.getTime();
-        if (diff < 0) diff = 0;
-
-        const totalSeconds = Math.floor(diff / 1000);
-        const days = Math.floor(totalSeconds / (3600 * 24));
-        const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
-        const mins = Math.floor((totalSeconds % 3600) / 60);
-        const secs = totalSeconds % 60;
-
-        cdDays.textContent = String(days);
-        cdHours.textContent = String(hours).padStart(2, "0");
-        cdMins.textContent = String(mins).padStart(2, "0");
-        cdSecs.textContent = String(secs).padStart(2, "0");
-      }
-
-      updateCountdown();
-      setInterval(updateCountdown, 1000);
+      love.style.display = "block";
+      startMemoryCarousel();
+      love.scrollIntoView({ behavior: "smooth", block: "start" });
     });
+
+    // ---------- Countdown Sydney ----------
+    function getSydneyNow(){
+      const parts = new Intl.DateTimeFormat("en-AU", {
+        timeZone: "Australia/Sydney",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false
+      }).formatToParts(new Date());
+
+      const get = (type) => parts.find(p => p.type === type)?.value;
+      return new Date(
+        Number(get("year")),
+        Number(get("month")) - 1,
+        Number(get("day")),
+        Number(get("hour")),
+        Number(get("minute")),
+        Number(get("second"))
+      );
+    }
+
+    function updateCountdown(){
+      const nowSydney = getSydneyNow();
+      const year = nowSydney.getFullYear();
+
+      let target = new Date(year, 1, 14, 0, 0, 0);
+      if (nowSydney.getTime() >= target.getTime()){
+        target = new Date(year + 1, 1, 14, 0, 0, 0);
+      }
+
+      let diff = target.getTime() - nowSydney.getTime();
+      if (diff < 0) diff = 0;
+
+      const totalSeconds = Math.floor(diff / 1000);
+      const days = Math.floor(totalSeconds / (3600 * 24));
+      const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+      const mins = Math.floor((totalSeconds % 3600) / 60);
+      const secs = totalSeconds % 60;
+
+      cdDays.textContent = String(days);
+      cdHours.textContent = String(hours).padStart(2, "0");
+      cdMins.textContent = String(mins).padStart(2, "0");
+      cdSecs.textContent = String(secs).padStart(2, "0");
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
   </script>
 </body>
 </html>
