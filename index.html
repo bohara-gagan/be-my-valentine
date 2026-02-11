@@ -28,7 +28,6 @@
       background: linear-gradient(135deg, #ff6f91, #ff9a9e);
     }
 
-    /* Floating hearts */
     .hearts{
       position: fixed;
       inset: 0;
@@ -112,7 +111,6 @@
       line-height: 1.12;
     }
 
-    /* Cute countdown */
     .countdown{
       position: relative;
       display: inline-flex;
@@ -124,45 +122,38 @@
       background: rgba(255,255,255,0.20);
       border: 1px solid rgba(255,255,255,0.28);
       box-shadow: 0 16px 34px rgba(0,0,0,0.14);
-      margin: 0 auto 14px;
+      margin: 0 auto 12px;
       font-size: 0.98rem;
       line-height: 1.2;
       backdrop-filter: blur(12px);
       overflow: hidden;
-      animation: cdPulse 2.4s ease-in-out infinite;
-    }
-    .countdown::after{
-      content:"";
-      position:absolute;
-      inset:-2px;
-      background: linear-gradient(110deg,
-        rgba(255,255,255,0.00) 20%,
-        rgba(255,255,255,0.35) 40%,
-        rgba(255,255,255,0.00) 60%);
-      transform: translateX(-120%);
-      animation: shimmer 3.2s ease-in-out infinite;
-      pointer-events:none;
-    }
-    @keyframes shimmer{
-      0%{ transform: translateX(-120%); }
-      55%{ transform: translateX(120%); }
-      100%{ transform: translateX(120%); }
-    }
-    @keyframes cdPulse{
-      0%,100%{ transform: scale(1); }
-      50%{ transform: scale(1.035); }
     }
     .countdown b{ font-weight: 900; }
     .countdown .dot{ opacity: 0.85; }
-    .cd-heart{
-      display:inline-block;
-      animation: heartBeat 1.25s ease-in-out infinite;
-      transform-origin: center;
-      filter: drop-shadow(0 10px 14px rgba(0,0,0,0.15));
+    .cd-heart{ display:inline-block; }
+
+    .musicBar{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      margin: 0 auto 8px;
+      flex-wrap: wrap;
     }
-    @keyframes heartBeat{
-      0%,100%{ transform: scale(1); }
-      50%{ transform: scale(1.18); }
+    .musicBtn{
+      padding: 10px 16px;
+      font-size: 0.98rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: rgba(255,255,255,0.86);
+      color: #ff2f6d;
+      box-shadow: 0 12px 22px rgba(0,0,0,0.18);
+    }
+    .musicNote{
+      margin: 0 0 14px;
+      font-size: 0.92rem;
+      opacity: 0.9;
+      min-height: 1.2em;
     }
 
     .pickup{
@@ -198,33 +189,34 @@
       -webkit-tap-highlight-color: transparent;
     }
 
+    /* ✅ YES ALWAYS ON TOP */
     #yesBtn{
+      position: relative;
+      z-index: 10;
       background: linear-gradient(135deg, #ff2f6d, #ff1744);
       color: white;
       box-shadow: 0 14px 28px rgba(255,47,109,0.55);
       transition: transform 0.15s ease, box-shadow 0.15s ease;
-      z-index: 2;
     }
     #yesBtn:hover{ transform: scale(1.08); }
 
+    /* ✅ NO ALWAYS BELOW YES */
     #noBtn{
+      position: absolute;
+      z-index: 2;
       background: white;
       color: #ff2f6d;
-      position: absolute;
-      left: 58%;
+      left: 65%;
       top: 18px;
       box-shadow: 0 12px 22px rgba(0,0,0,0.25);
-      z-index: 3;
       will-change: left, top, transform, opacity;
       transform-origin: center;
       transform: scale(var(--noScale, 1));
     }
 
-    /* Poof vanish */
     @keyframes poofVanish {
-      0%   { transform: scale(var(--noScale, 1)); opacity: 1; filter: blur(0); }
-      55%  { transform: scale(0.7); opacity: 0.75; filter: blur(0.2px); }
-      100% { transform: scale(0); opacity: 0; filter: blur(1.2px); }
+      0%   { transform: scale(var(--noScale, 1)); opacity: 1; }
+      100% { transform: scale(0); opacity: 0; }
     }
     .fade-out{
       animation: poofVanish 420ms ease-out forwards;
@@ -236,7 +228,7 @@
       width: 10px;
       height: 10px;
       pointer-events: none;
-      z-index: 10;
+      z-index: 999;
     }
     .poof span{
       position: absolute;
@@ -248,7 +240,6 @@
       background: rgba(255,255,255,0.9);
       transform: translate(-50%, -50%) scale(1);
       animation: poofParticle 520ms ease-out forwards;
-      box-shadow: 0 10px 18px rgba(0,0,0,0.12);
     }
     .poof span:nth-child(1){ --dx: -26px; --dy: -18px; }
     .poof span:nth-child(2){ --dx:  10px; --dy: -28px; }
@@ -261,7 +252,6 @@
       100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.2); opacity: 0; }
     }
 
-    /* Confetti */
     .confetti {
       position: fixed;
       inset: 0;
@@ -275,7 +265,6 @@
       font-size: 18px;
       animation: fall 1200ms ease-in forwards;
       opacity: 0.95;
-      filter: drop-shadow(0 12px 18px rgba(0,0,0,0.18));
     }
     @keyframes fall{
       to { transform: translateY(110vh) rotate(360deg); opacity: 0; }
@@ -290,7 +279,6 @@
       from{ opacity: 0; transform: translateY(20px); }
       to{ opacity: 1; transform: translateY(0); }
     }
-
     .love h2{ font-size: 2.05rem; margin: 8px 0 10px; }
 
     .couple-pic{
@@ -302,12 +290,6 @@
       margin: 12px auto 14px;
       border: 4px solid rgba(255,255,255,0.75);
       box-shadow: 0 18px 45px rgba(0,0,0,0.25);
-    }
-
-    .love p{
-      font-size: 1.08rem;
-      line-height: 1.7;
-      margin: 0;
     }
 
     .mem{
@@ -331,31 +313,11 @@
     }
     .mem p.show{ opacity: 1; transform: translateY(0); }
 
-    /* Music button: ALWAYS visible (top area) */
-    .musicBar{
-      display:flex;
-      justify-content:center;
-      gap:10px;
-      margin: 0 auto 16px;
-      flex-wrap: wrap;
-    }
-    .musicBtn{
-      padding: 10px 16px;
-      font-size: 0.98rem;
-      border-radius: 999px;
-      border: none;
-      cursor: pointer;
-      background: rgba(255,255,255,0.86);
-      color: #ff2f6d;
-      box-shadow: 0 12px 22px rgba(0,0,0,0.18);
-    }
-
     .signature{ margin-top: 18px; font-style: italic; opacity: 0.95; }
   </style>
 </head>
 
 <body>
-  <!-- IMPORTANT: song.mp3 must exist in repo root beside index.html -->
   <audio id="bgMusic" preload="auto" loop>
     <source src="song.mp3" type="audio/mpeg" />
   </audio>
@@ -383,11 +345,11 @@
         <span><b id="cdSecs">--</b>s</span>
       </div>
 
-      <!-- ALWAYS visible music controls -->
       <div class="musicBar">
         <button class="musicBtn" id="playMusicBtn" type="button">▶ Play song</button>
         <button class="musicBtn" id="pauseMusicBtn" type="button">⏸ Pause</button>
       </div>
+      <p class="musicNote" id="musicNote"></p>
 
       <h1 id="question">Will you be my Valentine? 💖</h1>
       <p class="pickup" id="pickupText">I made this unfair on purpose 😌</p>
@@ -423,9 +385,6 @@
   </div>
 
   <script>
-    // Quick debug: if JS is running, you’ll see this in console
-    console.log("✅ Script loaded");
-
     const noBtn = document.getElementById("noBtn");
     const yesBtn = document.getElementById("yesBtn");
     const question = document.getElementById("question");
@@ -434,10 +393,11 @@
     const pickupText = document.getElementById("pickupText");
     const noteText = document.getElementById("noteText");
     const heartsLayer = document.getElementById("hearts");
-    const bgMusic = document.getElementById("bgMusic");
 
+    const bgMusic = document.getElementById("bgMusic");
     const playMusicBtn = document.getElementById("playMusicBtn");
     const pauseMusicBtn = document.getElementById("pauseMusicBtn");
+    const musicNote = document.getElementById("musicNote");
 
     const cdDays = document.getElementById("cdDays");
     const cdHours = document.getElementById("cdHours");
@@ -446,30 +406,15 @@
 
     const memLine = document.getElementById("memLine");
 
-    // ---------- Music buttons ----------
-    async function playMusic(){
-      try{
-        bgMusic.volume = 0.9;
-        await bgMusic.play();
-      }catch(e){
-        alert("Music blocked by browser. Tap Play again or try Chrome/Safari with sound enabled.");
-        console.warn(e);
-      }
-    }
-    function pauseMusic(){ bgMusic.pause(); }
-
-    playMusicBtn.addEventListener("click", playMusic);
-    pauseMusicBtn.addEventListener("click", pauseMusic);
-
-    // ---------- Floating hearts ----------
+    // Floating hearts
     const HEARTS = ["💗","💖","💕","💘","💝","💓","✨","🌸"];
     function createFloatingHeart(){
       const h = document.createElement("span");
       h.textContent = HEARTS[Math.floor(Math.random() * HEARTS.length)];
       const left = Math.random() * 100;
       const size = 14 + Math.random() * 20;
-      const dur = 4 + Math.random() * 5;      // faster
-      const drift = (Math.random() * 140 - 70).toFixed(1) + "px"; // more drift
+      const dur = 4 + Math.random() * 5;
+      const drift = (Math.random() * 160 - 80).toFixed(1) + "px";
 
       h.style.left = left + "vw";
       h.style.fontSize = size + "px";
@@ -479,16 +424,15 @@
       heartsLayer.appendChild(h);
       setTimeout(() => h.remove(), (dur * 1000) + 300);
     }
-    for (let i = 0; i < 16; i++) setTimeout(createFloatingHeart, i * 160);
-    setInterval(createFloatingHeart, 320);
+    for (let i = 0; i < 16; i++) setTimeout(createFloatingHeart, i * 140);
+    setInterval(createFloatingHeart, 300);
 
-    // ---------- Confetti ----------
+    // Confetti
     function confettiBurst(){
       const wrap = document.createElement("div");
       wrap.className = "confetti";
       const emojis = ["💖","💕","💘","✨","🌸","💗"];
       const count = 70;
-
       for(let i=0;i<count;i++){
         const s = document.createElement("span");
         s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
@@ -501,7 +445,31 @@
       setTimeout(() => wrap.remove(), 1400);
     }
 
-    // ---------- Poof ----------
+    // Music controls (no popup alerts)
+    async function playMusic(){
+      try{
+        musicNote.textContent = "";
+        bgMusic.volume = 0.9;
+        await bgMusic.play();
+      }catch(e){
+        musicNote.textContent = "Music couldn’t start. (If the file is not a real MP3, convert it and re-upload.)";
+      }
+    }
+    function pauseMusic(){ bgMusic.pause(); }
+
+    playMusicBtn.addEventListener("click", playMusic);
+    pauseMusicBtn.addEventListener("click", pauseMusic);
+
+    // No button dodge FAST + FAR, and NEVER overlap Yes
+    let dodges = 0;
+    const maxDodges = 10;
+    let vanished = false;
+
+    const startScale = 1.0;
+    const endScale = 0.55;
+    function setNoScale(scale){ noBtn.style.setProperty("--noScale", scale); }
+    setNoScale(startScale);
+
     function makePoofAt(x, y){
       const poof = document.createElement("div");
       poof.className = "poof";
@@ -512,29 +480,17 @@
       setTimeout(() => poof.remove(), 650);
     }
 
-    // ---------- No button: FAST + FAR ----------
-    let dodges = 0;
-    const maxDodges = 9;
-    let vanished = false;
-
-    const startScale = 1.0;
-    const endScale = 0.55;
-    function setNoScale(scale){ noBtn.style.setProperty("--noScale", scale); }
-    setNoScale(startScale);
-
     function vanishNoButton(){
       if (vanished) return;
       vanished = true;
       noteText.textContent = "Okay okay… you win 😌";
-
       const r = noBtn.getBoundingClientRect();
       makePoofAt(r.left + r.width/2, r.top + r.height/2);
-
       noBtn.classList.add("fade-out");
       setTimeout(() => { noBtn.style.display = "none"; }, 450);
     }
 
-    function fastDodge(){
+    function dodgeFar(){
       if (vanished || dodges >= maxDodges) return;
 
       const bw = buttons.clientWidth;
@@ -547,43 +503,56 @@
       const maxX = Math.max(0, bw - noRect.width);
       const maxY = Math.max(0, bh - noRect.height);
 
-      // Make it go FAR by preferring edges away from Yes
-      const yesCenterX = (yesRect.left + yesRect.width/2) - btnRect.left;
-      const yesCenterY = (yesRect.top + yesRect.height/2) - btnRect.top;
+      // Keep it FAR away from YES
+      const yesCX = (yesRect.left + yesRect.width/2) - btnRect.left;
+      const yesCY = (yesRect.top + yesRect.height/2) - btnRect.top;
 
       let best = {x: 0, y: 0, score: -1};
-      for (let i = 0; i < 14; i++){
+
+      for (let i = 0; i < 20; i++){
         const x = Math.random() * maxX;
         const y = Math.random() * maxY;
-        const dx = (x + noRect.width/2) - yesCenterX;
-        const dy = (y + noRect.height/2) - yesCenterY;
+
+        const dx = (x + noRect.width/2) - yesCX;
+        const dy = (y + noRect.height/2) - yesCY;
         const dist = Math.sqrt(dx*dx + dy*dy);
+
+        // Hard rule: do not allow overlap-ish (distance threshold)
+        if (dist < 140) continue;
+
         if (dist > best.score) best = {x, y, score: dist};
       }
 
-      // SUPER fast move
-      noBtn.style.transition = "left 35ms linear, top 35ms linear";
+      // If all tries failed, just push it to a corner
+      if (best.score < 0){
+        best = {x: 0, y: 0, score: 0};
+      }
+
+      // SUPER FAST movement
+      noBtn.style.transition = "left 30ms linear, top 30ms linear";
       noBtn.style.left = best.x + "px";
       noBtn.style.top  = best.y + "px";
 
       dodges++;
-
       const t = dodges / maxDodges;
       setNoScale(startScale + (endScale - startScale) * t);
 
       if (dodges === 2) noteText.textContent = "No? really? 😭";
-      if (dodges === 5) noteText.textContent = "Bro stop chasing me 😭";
-      if (dodges === 8) noteText.textContent = "Alright I’m gone 😤";
-
+      if (dodges === 6) noteText.textContent = "Stop chasing me 😭";
       if (dodges >= maxDodges) vanishNoButton();
     }
 
-    // Trigger dodge aggressively
-    noBtn.addEventListener("mouseenter", fastDodge);
-    noBtn.addEventListener("pointerenter", fastDodge);
-    noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); fastDodge(); }, { passive:false });
+    // IMPORTANT: move NO away immediately so it doesn't cover YES on load
+    window.addEventListener("load", () => {
+      setTimeout(dodgeFar, 100);
+      setTimeout(dodgeFar, 180);
+    });
 
-    // ---------- Memory carousel ----------
+    noBtn.addEventListener("mouseenter", dodgeFar);
+    noBtn.addEventListener("pointerenter", dodgeFar);
+    noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); dodgeFar(); }, { passive:false });
+
+    // Memory carousel
     const memories = [
       "I love your laugh.",
       "I love how you care.",
@@ -599,25 +568,21 @@
 
       const showNext = () => {
         if (i >= memories.length) return;
-
         memLine.classList.remove("show");
         setTimeout(() => {
           memLine.textContent = "💗 " + memories[i];
           memLine.classList.add("show");
           i++;
         }, 120);
-
         setTimeout(showNext, 1200);
       };
 
       showNext();
     }
 
-    // ---------- YES button (UNBREAKABLE) ----------
+    // YES button (will always work now)
     yesBtn.addEventListener("click", async () => {
-      // Always try music on click
       await playMusic();
-
       confettiBurst();
 
       question.style.display = "none";
@@ -630,7 +595,7 @@
       love.scrollIntoView({ behavior: "smooth", block: "start" });
     });
 
-    // ---------- Countdown Sydney ----------
+    // Countdown Sydney
     function getSydneyNow(){
       const parts = new Intl.DateTimeFormat("en-AU", {
         timeZone: "Australia/Sydney",
