@@ -380,12 +380,29 @@
       display: block;
       border: 0;
     }
-    .tapplay{
-      margin: 10px 0 0;
-      opacity: 0.95;
-      font-size: 0.98rem;
-      text-align: center;
+
+    .yt-actions{
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
     }
+    .yt-link{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 999px;
+      border: 0;
+      cursor: pointer;
+      background: rgba(255,255,255,0.9);
+      color: #ff2f6d;
+      font-weight: 800;
+      box-shadow: 0 12px 22px rgba(0,0,0,0.20);
+      text-decoration: none;
+    }
+    .yt-link:active{ transform: scale(0.99); }
 
     @media (max-width: 380px){
       .profile-pic{ width: 200px; height: 200px; }
@@ -438,17 +455,25 @@
 
         <div class="song">
           <div class="song-title">🎬 Tap play</div>
+
           <div class="yt-wrap">
-            <!-- ✅ Official "You're Beautiful" video -->
+            <!-- ✅ nocookie embed (more reliable) -->
             <iframe
               class="yt"
-              src="https://www.youtube.com/embed/oofSnsGkops?rel=0&modestbranding=1"
+              src="https://www.youtube-nocookie.com/embed/oofSnsGkops?rel=0&modestbranding=1"
               title="You’re Beautiful — James Blunt"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowfullscreen>
             </iframe>
           </div>
-          <p class="tapplay"></p>
+
+          <div class="yt-actions">
+            <!-- ✅ fallback that always works -->
+            <a class="yt-link" target="_blank" rel="noopener"
+               href="https://www.youtube.com/watch?v=oofSnsGkops">
+              ▶ Open song in YouTube
+            </a>
+          </div>
         </div>
 
         <img src="couple.jpg" alt="Us together" class="couple-pic" />
@@ -585,7 +610,7 @@
           if (score > best.score) best = { x, y, score };
         }
 
-        noBtn.style.transition = "left 20ms linear, top 20ms linear, transform 120ms ease";
+        noBtn.style.transition = "left 18ms linear, top 18ms linear, transform 120ms ease";
         noBtn.style.left = clamp(best.x, pad, maxX) + "px";
         noBtn.style.top  = clamp(best.y, pad, maxY) + "px";
 
@@ -614,7 +639,7 @@
         const cx = r.left + r.width/2;
         const cy = r.top + r.height/2;
         const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
-        if (dist < 120) dodgeInsideBox();
+        if (dist < 130) dodgeInsideBox();
       });
 
       // Also dodge if user tries to click/tap it
