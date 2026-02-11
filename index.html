@@ -10,23 +10,25 @@
 
     body{
       margin: 0;
-      height: 100vh;
+      min-height: 100vh;          /* ✅ allow page to grow */
+      padding: 24px 0;            /* ✅ nicer scroll spacing */
       display: flex;
       align-items: center;
       justify-content: center;
       background: linear-gradient(135deg, #ff6f91, #ff9a9e);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: white;
-      overflow: hidden;
+      overflow-y: auto;           /* ✅ enable scrolling */
+      -webkit-overflow-scrolling: touch;
     }
 
     .card{
       width: 92%;
-      max-width: 430px;
+      max-width: 460px;
       background: rgba(255, 255, 255, 0.25);
       backdrop-filter: blur(18px);
-      border-radius: 30px;
-      padding: 44px 32px;
+      border-radius: 32px;
+      padding: 46px 34px;
       text-align: center;
       box-shadow: 0 35px 70px rgba(0,0,0,0.3);
       animation: appear 0.9s ease;
@@ -37,57 +39,64 @@
       to{ opacity: 1; transform: translateY(0) scale(1); }
     }
 
+    /* ✅ Bigger images */
     .photo-wrap{
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 14px;
-      margin-bottom: 10px;
+      gap: 18px;
+      margin-bottom: 16px;
     }
 
     .profile-pic{
-      width: 155px;
-      height: 155px;
+      width: 190px;               /* ✅ bigger main pic */
+      height: 190px;
       border-radius: 50%;
       object-fit: cover;
-      border: 4px solid rgba(255,255,255,0.75);
-      box-shadow: 0 18px 40px rgba(255,255,255,0.45);
+      border: 4px solid rgba(255,255,255,0.78);
+      box-shadow: 0 18px 44px rgba(255,255,255,0.42);
     }
 
     .mini-photos{
       display: flex;
-      gap: 12px;
+      gap: 16px;
+      justify-content: center;
     }
 
     .mini-pic{
-      width: 64px;
-      height: 64px;
+      width: 92px;                /* ✅ bigger mini pics */
+      height: 92px;
       object-fit: cover;
-      border-radius: 16px;
-      border: 3px solid rgba(255,255,255,0.7);
-      box-shadow: 0 10px 22px rgba(0,0,0,0.18);
+      border-radius: 22px;
+      border: 3px solid rgba(255,255,255,0.72);
+      box-shadow: 0 12px 26px rgba(0,0,0,0.18);
     }
 
     h1{
-      font-size: 2.25rem;
-      margin: 14px 0 10px;
+      font-size: 2.35rem;
+      margin: 18px 0 12px;
+      line-height: 1.12;
     }
 
     .pickup{
-      font-size: 1.05rem;
+      font-size: 1.08rem;
       line-height: 1.55;
-      margin: 0 0 30px;
+      margin: 0 0 34px;
       opacity: 0.95;
     }
 
     .buttons{
       position: relative;
-      height: 100px;
+      height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
     }
 
     button{
-      padding: 14px 32px;
-      font-size: 1.1rem;
+      padding: 14px 34px;
+      font-size: 1.12rem;
       border-radius: 999px;
       border: none;
       cursor: pointer;
@@ -110,7 +119,7 @@
       background: white;
       color: #ff2f6d;
       position: absolute;
-      left: 55%;
+      left: 58%;
       top: 0;
       box-shadow: 0 12px 22px rgba(0,0,0,0.25);
     }
@@ -127,15 +136,20 @@
 
     .love h2{
       font-size: 2.05rem;
-      margin-bottom: 10px;
+      margin: 8px 0 10px;
+    }
+
+    .love .sub{
+      opacity: 0.95;
+      margin: 0 0 12px;
     }
 
     .couple-pic{
       width: 100%;
-      max-width: 330px;
-      height: 210px;
+      max-width: 360px;
+      height: 230px;
       object-fit: cover;
-      border-radius: 20px;
+      border-radius: 22px;
       margin: 12px auto 18px;
       border: 3px solid rgba(255,255,255,0.75);
       box-shadow: 0 18px 45px rgba(0,0,0,0.25);
@@ -160,18 +174,18 @@
 
     <div class="photo-wrap">
       <!-- Main photo -->
-      <img src="sahara.jpg?v=9" alt="Sahara Chloe Kirkman" class="profile-pic" />
+      <img src="sahara.jpg?v=99" alt="Sahara" class="profile-pic" />
 
       <!-- Two extra photos -->
       <div class="mini-photos">
-        <img src="sahara2.jpg?v=9" alt="Sahara photo 2" class="mini-pic" />
-        <img src="sahara3.jpg?v=9" alt="Sahara photo 3" class="mini-pic" />
+        <img src="sahara2.jpg?v=99" alt="Sahara photo 2" class="mini-pic" />
+        <img src="sahara3.jpg?v=99" alt="Sahara photo 3" class="mini-pic" />
       </div>
     </div>
 
     <h1 id="question">Will you be my Valentine? 💖</h1>
 
-    <p class="pickup">
+    <p class="pickup" id="pickupText">
       I made this unfair on purpose 😌
     </p>
 
@@ -182,9 +196,10 @@
 
     <div class="love" id="love">
       <h2>Sahara Chloe Kirkman 💗</h2>
+      <p class="sub">Ok fine… you win 😌</p>
 
       <!-- Couple photo after YES -->
-      <img src="couple.jpg?v=9" alt="Us together" class="couple-pic" />
+      <img src="couple.jpg?v=99" alt="Us together" class="couple-pic" />
 
       <p>
         Thank you for saying yes, my love.<br>
@@ -207,32 +222,37 @@
     const question = document.getElementById("question");
     const buttons = document.getElementById("buttons");
     const love = document.getElementById("love");
+    const pickupText = document.getElementById("pickupText");
 
-    // FAST + FAR teleport on hover (works best on desktop)
-    noBtn.addEventListener("mouseenter", () => {
+    function teleportNoButton(){
       const maxX = window.innerWidth - noBtn.offsetWidth;
       const maxY = window.innerHeight - noBtn.offsetHeight;
 
-      noBtn.style.transition = "none";
-      noBtn.style.left = (Math.random() * maxX) + "px";
-      noBtn.style.top  = (Math.random() * maxY) + "px";
-    });
+      // Make it "far": avoid the middle-ish area a bit
+      let x = Math.random() * maxX;
+      let y = Math.random() * maxY;
 
-    // Mobile: also dodge on tap
+      noBtn.style.transition = "none"; // instant
+      noBtn.style.left = x + "px";
+      noBtn.style.top  = y + "px";
+    }
+
+    // Desktop hover
+    noBtn.addEventListener("mouseenter", teleportNoButton);
+
+    // Mobile tap
     noBtn.addEventListener("touchstart", (e) => {
       e.preventDefault();
-      const maxX = window.innerWidth - noBtn.offsetWidth;
-      const maxY = window.innerHeight - noBtn.offsetHeight;
-
-      noBtn.style.transition = "none";
-      noBtn.style.left = (Math.random() * maxX) + "px";
-      noBtn.style.top  = (Math.random() * maxY) + "px";
+      teleportNoButton();
     }, { passive: false });
 
     yesBtn.addEventListener("click", () => {
       question.style.display = "none";
       buttons.style.display = "none";
+      pickupText.style.display = "none";
       love.style.display = "block";
+      // Scroll to the love section smoothly (helps on smaller screens)
+      love.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   </script>
 </body>
