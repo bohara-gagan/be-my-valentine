@@ -112,7 +112,7 @@
       line-height: 1.12;
     }
 
-    /* Cute countdown */
+    /* Countdown */
     .countdown{
       position: relative;
       display: inline-flex;
@@ -179,15 +179,9 @@
       min-height: 1.2em;
     }
 
-    .debug{
-      font-size: 0.85rem;
-      opacity: 0.75;
-      margin: 0 0 10px;
-    }
-
     .buttons{
       position: relative;
-      height: 160px;
+      height: 170px;
       margin-top: 6px;
       display: flex;
       align-items: center;
@@ -204,7 +198,6 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* make YES always clickable above everything */
     #yesBtn{
       position: relative;
       z-index: 50;
@@ -329,8 +322,8 @@
     }
     .yt-note{
       margin: 6px 0 12px;
-      font-size: 0.92rem;
-      opacity: 0.9;
+      font-size: 0.98rem;
+      opacity: 0.95;
     }
 
     .couple-pic{
@@ -386,15 +379,6 @@
       .mini-pic{ width: 105px; height: 105px; }
       h1{ font-size: 2.1rem; }
     }
-
-    @media (prefers-reduced-motion: reduce){
-      .hearts span, .confetti span, .card, .love { animation: none !important; }
-      #yesBtn { transition: none !important; }
-      .mem p{ transition: none !important; }
-      .countdown{ animation: none !important; }
-      .countdown::after{ animation: none !important; }
-      .cd-heart{ animation: none !important; }
-    }
   </style>
 </head>
 
@@ -422,8 +406,6 @@
         <span><b id="cdSecs">--</b>s</span>
       </div>
 
-      <p class="debug" id="debugLine">JS loading…</p>
-
       <h1 id="question">Will you be my Valentine? 💖</h1>
       <p class="pickup" id="pickupText">I made this unfair on purpose 😌</p>
       <p class="tiny-note" id="noteText"></p>
@@ -446,7 +428,7 @@
             allowfullscreen
           ></iframe>
         </div>
-        <p class="yt-note">Tap play 😊 (browsers block autoplay with sound)</p>
+        <p class="yt-note">Tap play 😊</p>
 
         <img src="couple.jpg" alt="Us together" class="couple-pic" />
 
@@ -471,12 +453,6 @@
   </div>
 
   <script>
-    // Show JS errors on screen (so "dead buttons" never happen silently)
-    window.addEventListener("error", (e) => {
-      const dbg = document.getElementById("debugLine");
-      if (dbg) dbg.textContent = "JS ERROR: " + (e.message || "unknown");
-    });
-
     document.addEventListener("DOMContentLoaded", () => {
       const noBtn = document.getElementById("noBtn");
       const yesBtn = document.getElementById("yesBtn");
@@ -486,7 +462,6 @@
       const pickupText = document.getElementById("pickupText");
       const noteText = document.getElementById("noteText");
       const heartsLayer = document.getElementById("hearts");
-      const debugLine = document.getElementById("debugLine");
 
       const cdDays = document.getElementById("cdDays");
       const cdHours = document.getElementById("cdHours");
@@ -494,8 +469,6 @@
       const cdSecs = document.getElementById("cdSecs");
 
       const memLine = document.getElementById("memLine");
-
-      debugLine.textContent = "JS loaded ✅";
 
       /* Floating hearts */
       const HEARTS = ["💗","💖","💕","💘","💝","💓","✨","🌸"];
@@ -505,7 +478,7 @@
         const left = Math.random() * 100;
         const size = 14 + Math.random() * 20;
         const dur = 4 + Math.random() * 5;
-        const drift = (Math.random() * 220 - 110).toFixed(1) + "px";
+        const drift = (Math.random() * 260 - 130).toFixed(1) + "px";
 
         h.style.left = left + "vw";
         h.style.fontSize = size + "px";
@@ -516,7 +489,7 @@
         setTimeout(() => h.remove(), (dur * 1000) + 300);
       }
       for (let i = 0; i < 16; i++) setTimeout(createFloatingHeart, i * 120);
-      setInterval(createFloatingHeart, 280);
+      setInterval(createFloatingHeart, 260);
 
       /* Confetti */
       function confettiBurst(){
@@ -537,7 +510,7 @@
         setTimeout(() => wrap.remove(), 1400);
       }
 
-      /* Poof particles */
+      /* Poof */
       function makePoofAt(el){
         const rect = el.getBoundingClientRect();
         const poof = document.createElement("div");
@@ -549,7 +522,7 @@
         setTimeout(() => poof.remove(), 650);
       }
 
-      /* No dodge: fast + far (choose farthest of many samples) */
+      /* NO dodge: fast + far (choose farthest sample) */
       let dodges = 0;
       const maxDodges = 10;
       let vanished = false;
@@ -572,18 +545,19 @@
 
         let best = {x: 0, y: 0, score: -1};
 
-        for (let i = 0; i < 30; i++){
+        for (let i = 0; i < 40; i++){
           const x = Math.random() * maxX;
           const y = Math.random() * maxY;
+
           const dx = (x + noRect.width/2) - yesCX;
           const dy = (y + noRect.height/2) - yesCY;
           const dist = Math.sqrt(dx*dx + dy*dy);
 
-          if (dist < 170) continue; // stay far from YES
+          if (dist < 190) continue; // stay away from YES
           if (dist > best.score) best = {x, y, score: dist};
         }
 
-        noBtn.style.transition = "left 20ms linear, top 20ms linear";
+        noBtn.style.transition = "left 15ms linear, top 15ms linear";
         noBtn.style.left = best.x + "px";
         noBtn.style.top  = best.y + "px";
 
@@ -601,16 +575,19 @@
         }
       }
 
-      // Move it away immediately so it doesn’t sit on YES on some screens
-      setTimeout(dodgeFar, 120);
-      setTimeout(dodgeFar, 220);
+      // Force it to move away immediately so it never blocks the YES button
+      setTimeout(dodgeFar, 80);
+      setTimeout(dodgeFar, 160);
 
+      // Make it dodge in more situations (so it feels fast and “impossible”)
       noBtn.addEventListener("mouseenter", dodgeFar);
+      noBtn.addEventListener("mousemove", dodgeFar);
       noBtn.addEventListener("pointerenter", dodgeFar);
-      noBtn.addEventListener("touchstart", (e) => {
-        e.preventDefault();
-        dodgeFar();
-      }, { passive: false });
+      noBtn.addEventListener("pointermove", dodgeFar);
+
+      // Mobile touch
+      noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); dodgeFar(); }, { passive: false });
+      noBtn.addEventListener("touchmove", (e) => { e.preventDefault(); dodgeFar(); }, { passive: false });
 
       /* Memory carousel */
       const memories = [
