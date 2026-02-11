@@ -64,12 +64,11 @@
       background: rgba(255, 255, 255, 0.25);
       backdrop-filter: blur(18px);
       border-radius: 34px;
-      padding: 46px 34px;
+      padding: 40px 34px 46px;
       text-align: center;
       box-shadow: 0 35px 70px rgba(0,0,0,0.3);
       animation: appear 0.9s ease;
     }
-
     @keyframes appear{
       from{ opacity: 0; transform: translateY(25px) scale(0.98); }
       to{ opacity: 1; transform: translateY(0) scale(1); }
@@ -80,7 +79,7 @@
       flex-direction: column;
       align-items: center;
       gap: 18px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     .profile-pic{
@@ -109,9 +108,28 @@
 
     h1{
       font-size: 2.35rem;
-      margin: 18px 0 12px;
+      margin: 16px 0 10px;
       line-height: 1.12;
     }
+
+    /* ✅ Countdown pill */
+    .countdown{
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.25);
+      box-shadow: 0 14px 28px rgba(0,0,0,0.12);
+      margin: 0 auto 14px;
+      font-size: 0.98rem;
+      line-height: 1.2;
+      backdrop-filter: blur(10px);
+    }
+    .countdown b{ font-weight: 800; }
+    .countdown .dot{ opacity: 0.85; }
 
     .pickup{
       font-size: 1.08rem;
@@ -123,7 +141,7 @@
     .tiny-note{
       font-size: 0.95rem;
       opacity: 0.9;
-      margin: 0 0 26px;
+      margin: 0 0 22px;
       min-height: 1.2em;
     }
 
@@ -168,6 +186,20 @@
       z-index: 3;
       will-change: left, top, transform, opacity;
       transform-origin: center;
+      transform: scale(var(--noScale, 1));
+    }
+
+    /* ✅ Panic shake */
+    @keyframes panicShake {
+      0%   { transform: translateX(0) rotate(0deg) scale(var(--noScale, 1)); }
+      20%  { transform: translateX(-3px) rotate(-2deg) scale(var(--noScale, 1)); }
+      40%  { transform: translateX(3px) rotate(2deg) scale(var(--noScale, 1)); }
+      60%  { transform: translateX(-2px) rotate(-1deg) scale(var(--noScale, 1)); }
+      80%  { transform: translateX(2px) rotate(1deg) scale(var(--noScale, 1)); }
+      100% { transform: translateX(0) rotate(0deg) scale(var(--noScale, 1)); }
+    }
+    .panic{
+      animation: panicShake 130ms ease-in-out 2;
     }
 
     /* ✅ Poof vanish */
@@ -211,7 +243,7 @@
       100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.2); opacity: 0; }
     }
 
-    /* ✅ Confetti burst */
+    /* ✅ Confetti */
     .confetti {
       position: fixed;
       inset: 0;
@@ -252,7 +284,7 @@
       height: 250px;
       object-fit: cover;
       border-radius: 24px;
-      margin: 12px auto 18px;
+      margin: 12px auto 14px;
       border: 4px solid rgba(255,255,255,0.75);
       box-shadow: 0 18px 45px rgba(0,0,0,0.25);
     }
@@ -263,8 +295,33 @@
       margin: 0;
     }
 
+    /* ✅ Memory carousel */
+    .mem{
+      margin: 14px auto 0;
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.22);
+      box-shadow: 0 14px 28px rgba(0,0,0,0.12);
+      min-height: 54px;
+      display: grid;
+      place-items: center;
+    }
+    .mem p{
+      margin: 0;
+      font-size: 1.05rem;
+      line-height: 1.45;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 260ms ease, transform 260ms ease;
+    }
+    .mem p.show{
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     .signature{
-      margin-top: 22px;
+      margin-top: 18px;
       font-style: italic;
       opacity: 0.95;
     }
@@ -278,6 +335,7 @@
     @media (prefers-reduced-motion: reduce){
       .hearts span, .confetti span, .card, .love { animation: none !important; }
       #yesBtn { transition: none !important; }
+      .mem p{ transition: none !important; }
     }
   </style>
 </head>
@@ -294,6 +352,16 @@
           <img src="sahara2.jpg" alt="Sahara photo 2" class="mini-pic" />
           <img src="sahara3.jpg" alt="Sahara photo 3" class="mini-pic" />
         </div>
+      </div>
+
+      <!-- ✅ Countdown (Sydney time) -->
+      <div class="countdown" aria-live="polite">
+        <span>⏳ Valentine’s in</span>
+        <span class="dot">•</span>
+        <span><b id="cdDays">--</b>d</span>
+        <span><b id="cdHours">--</b>h</span>
+        <span><b id="cdMins">--</b>m</span>
+        <span><b id="cdSecs">--</b>s</span>
       </div>
 
       <h1 id="question">Will you be my Valentine? 💖</h1>
@@ -317,6 +385,11 @@
           I can’t wait to make beautiful memories with you this Valentine’s.
         </p>
 
+        <!-- ✅ Memory carousel -->
+        <div class="mem" aria-live="polite">
+          <p id="memLine"></p>
+        </div>
+
         <p class="signature">
           Always yours,<br>
           <strong>Gagan</strong><br>
@@ -337,19 +410,23 @@
     const noteText = document.getElementById("noteText");
     const heartsLayer = document.getElementById("hearts");
 
+    // Countdown DOM
+    const cdDays = document.getElementById("cdDays");
+    const cdHours = document.getElementById("cdHours");
+    const cdMins = document.getElementById("cdMins");
+    const cdSecs = document.getElementById("cdSecs");
+
+    // Memory carousel DOM
+    const memLine = document.getElementById("memLine");
+
     let dodges = 0;
     const maxDodges = 7;
     let vanished = false;
 
-    /* ✅ No button shrink settings */
+    /* ✅ No button shrink */
     const startScale = 1.0;
-    const endScale = 0.55; // how small it gets before vanishing
-
-    function setNoScale(scale){
-      // store for CSS animation too
-      noBtn.style.setProperty("--noScale", scale);
-      noBtn.style.transform = `scale(${scale})`;
-    }
+    const endScale = 0.55;
+    function setNoScale(scale){ noBtn.style.setProperty("--noScale", scale); }
     setNoScale(startScale);
 
     /* ✅ Floating hearts */
@@ -373,13 +450,16 @@
     for (let i = 0; i < 16; i++) setTimeout(createFloatingHeart, i * 200);
     setInterval(createFloatingHeart, 420);
 
-    /* ✅ WebAudio pop */
+    /* ✅ Audio */
     let audioCtx = null;
+    function getCtx(){
+      if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      return audioCtx;
+    }
+
     function popSound(){
       try{
-        if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const ctx = audioCtx;
-
+        const ctx = getCtx();
         const o = ctx.createOscillator();
         const g = ctx.createGain();
 
@@ -391,24 +471,73 @@
         g.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.01);
         g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.10);
 
-        o.connect(g);
-        g.connect(ctx.destination);
-        o.start();
-        o.stop(ctx.currentTime + 0.11);
+        o.connect(g); g.connect(ctx.destination);
+        o.start(); o.stop(ctx.currentTime + 0.11);
       }catch(e){}
     }
 
-    /* ✅ Poof for NO */
+    function clapSound(){
+      try{
+        const ctx = getCtx();
+        const bufferSize = ctx.sampleRate * 0.12;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++){
+          data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+        }
+
+        const noise = ctx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = "bandpass";
+        filter.frequency.value = 1400;
+        filter.Q.value = 0.8;
+
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.0001, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.7, ctx.currentTime + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.12);
+
+        noise.connect(filter);
+        filter.connect(g);
+        g.connect(ctx.destination);
+
+        noise.start();
+        noise.stop(ctx.currentTime + 0.12);
+      }catch(e){}
+    }
+
+    function chimeSound(){
+      try{
+        const ctx = getCtx();
+        const freqs = [784, 988, 1175];
+        freqs.forEach((f, idx) => {
+          const o = ctx.createOscillator();
+          const g = ctx.createGain();
+          o.type = "sine";
+          o.frequency.setValueAtTime(f, ctx.currentTime);
+
+          const t0 = ctx.currentTime + idx * 0.03;
+          g.gain.setValueAtTime(0.0001, t0);
+          g.gain.exponentialRampToValueAtTime(0.18, t0 + 0.01);
+          g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.22);
+
+          o.connect(g); g.connect(ctx.destination);
+          o.start(t0);
+          o.stop(t0 + 0.25);
+        });
+      }catch(e){}
+    }
+
+    /* ✅ Poof */
     function makePoofAtNoButton(){
       const rect = noBtn.getBoundingClientRect();
       const poof = document.createElement("div");
       poof.className = "poof";
       poof.style.left = (rect.left + rect.width / 2 + window.scrollX) + "px";
       poof.style.top  = (rect.top + rect.height / 2 + window.scrollY) + "px";
-      for (let i = 0; i < 6; i++){
-        const s = document.createElement("span");
-        poof.appendChild(s);
-      }
+      for (let i = 0; i < 6; i++) poof.appendChild(document.createElement("span"));
       document.body.appendChild(poof);
       setTimeout(() => poof.remove(), 650);
     }
@@ -416,23 +545,19 @@
     function vanishNoButton(){
       if (vanished) return;
       vanished = true;
-
       noteText.textContent = "Okay okay… you win 😌";
       makePoofAtNoButton();
       popSound();
       noBtn.classList.add("fade-out");
-
-      setTimeout(() => {
-        noBtn.style.display = "none";
-      }, 450);
+      setTimeout(() => { noBtn.style.display = "none"; }, 450);
     }
 
-    /* ✅ Confetti for YES */
+    /* ✅ Confetti */
     function confettiBurst(){
       const wrap = document.createElement("div");
       wrap.className = "confetti";
       const emojis = ["💖","💕","💘","✨","🌸","💗"];
-      const count = 50;
+      const count = 52;
 
       for(let i=0;i<count;i++){
         const s = document.createElement("span");
@@ -446,30 +571,35 @@
       setTimeout(() => wrap.remove(), 1400);
     }
 
-    /* ✅ Fast + far dodge + shrink per dodge */
+    /* ✅ Panic shake restart */
+    function panic(){
+      noBtn.classList.remove("panic");
+      void noBtn.offsetWidth;
+      noBtn.classList.add("panic");
+    }
+
+    /* ✅ Dodge */
     function teleportInsideBox(){
       if (dodges >= maxDodges || vanished) return;
 
       const bw = buttons.clientWidth;
       const bh = buttons.clientHeight;
 
-      // scale affects size, so use bounding rect for accurate width/height
-      const noRect = noBtn.getBoundingClientRect();
       const btnRect = buttons.getBoundingClientRect();
+      const yesRect = yesBtn.getBoundingClientRect();
+      const noRect = noBtn.getBoundingClientRect();
 
       const maxX = bw - noRect.width;
       const maxY = bh - noRect.height;
 
-      const yesRect = yesBtn.getBoundingClientRect();
-
-      const avoidRadius = 105;
+      const avoidRadius = 110;
       const yesCenterX = (yesRect.left + yesRect.width/2) - btnRect.left;
       const yesCenterY = (yesRect.top + yesRect.height/2) - btnRect.top;
 
       let x = 0, y = 0;
       let tries = 0;
 
-      while (tries < 16){
+      while (tries < 18){
         x = Math.random() * Math.max(0, maxX);
         y = Math.random() * Math.max(0, maxY);
 
@@ -481,22 +611,21 @@
         tries++;
       }
 
-      // ✅ snappy movement
-      noBtn.style.transition = "left 60ms linear, top 60ms linear, transform 90ms ease";
+      noBtn.style.transition = "left 55ms linear, top 55ms linear";
       noBtn.style.left = x + "px";
       noBtn.style.top  = y + "px";
 
       dodges++;
 
-      // ✅ shrink each dodge (linear from startScale to endScale)
       const t = dodges / maxDodges;
       const newScale = startScale + (endScale - startScale) * t;
       setNoScale(newScale);
 
+      if (dodges >= 3) panic();
       popSound();
 
       if (dodges === 2) noteText.textContent = "No? really? 😭";
-      if (dodges === 4) noteText.textContent = "That button is… getting weaker 😌";
+      if (dodges === 4) noteText.textContent = "It’s literally panicking now 😌";
       if (dodges === 6) noteText.textContent = "Last last chance 😤";
 
       if (dodges >= maxDodges) vanishNoButton();
@@ -509,8 +638,40 @@
       teleportInsideBox();
     }, { passive: false });
 
+    /* ✅ Memory carousel */
+    const memories = [
+      "I love your laugh.",
+      "I love how you care.",
+      "I love our little moments.",
+      "I love the way you look at me.",
+      "I love how you make life feel lighter."
+    ];
+
+    function startMemoryCarousel(){
+      let i = 0;
+      memLine.textContent = "";
+      memLine.classList.remove("show");
+
+      const showNext = () => {
+        if (i >= memories.length) return;
+
+        memLine.classList.remove("show");
+        // small delay so transition resets
+        setTimeout(() => {
+          memLine.textContent = "💗 " + memories[i];
+          memLine.classList.add("show");
+          i++;
+        }, 120);
+
+        setTimeout(showNext, 1200);
+      };
+
+      showNext();
+    }
+
     yesBtn.addEventListener("click", () => {
-      popSound();
+      clapSound();
+      chimeSound();
       confettiBurst();
 
       question.style.display = "none";
@@ -518,8 +679,66 @@
       pickupText.style.display = "none";
       noteText.style.display = "none";
       love.style.display = "block";
+
+      startMemoryCarousel();
+
       love.scrollIntoView({ behavior: "smooth", block: "start" });
     });
+
+    /* ✅ Countdown to Valentine’s Day (Sydney/NSW time) */
+    function getSydneyNow(){
+      const parts = new Intl.DateTimeFormat("en-AU", {
+        timeZone: "Australia/Sydney",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false
+      }).formatToParts(new Date());
+
+      const get = (type) => parts.find(p => p.type === type)?.value;
+      const y = Number(get("year"));
+      const m = Number(get("month"));
+      const d = Number(get("day"));
+      const hh = Number(get("hour"));
+      const mm = Number(get("minute"));
+      const ss = Number(get("second"));
+
+      // Construct a Date that represents the same wall-clock time.
+      return new Date(y, m - 1, d, hh, mm, ss);
+    }
+
+    function updateCountdown(){
+      const nowSydney = getSydneyNow();
+      const year = nowSydney.getFullYear();
+
+      // Target: Feb 14, 00:00:00 Sydney time (wall-clock)
+      let target = new Date(year, 1, 14, 0, 0, 0);
+
+      // If already past this year's Valentine's, use next year
+      if (nowSydney.getTime() >= target.getTime()){
+        target = new Date(year + 1, 1, 14, 0, 0, 0);
+      }
+
+      let diff = target.getTime() - nowSydney.getTime();
+      if (diff < 0) diff = 0;
+
+      const totalSeconds = Math.floor(diff / 1000);
+      const days = Math.floor(totalSeconds / (3600 * 24));
+      const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+      const mins = Math.floor((totalSeconds % 3600) / 60);
+      const secs = totalSeconds % 60;
+
+      cdDays.textContent = String(days);
+      cdHours.textContent = String(hours).padStart(2, "0");
+      cdMins.textContent = String(mins).padStart(2, "0");
+      cdSecs.textContent = String(secs).padStart(2, "0");
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
   </script>
 </body>
 </html>
