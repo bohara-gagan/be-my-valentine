@@ -28,7 +28,6 @@
       background: linear-gradient(135deg, #ff6f91, #ff9a9e);
     }
 
-    /* ✅ Floating hearts */
     .hearts{
       position: fixed;
       inset: 0;
@@ -112,7 +111,7 @@
       line-height: 1.12;
     }
 
-    /* ✅ CUTER COUNTDOWN */
+    /* CUTER COUNTDOWN */
     .countdown{
       position: relative;
       display: inline-flex;
@@ -205,10 +204,6 @@
       transition: transform 0.15s ease, box-shadow 0.15s ease;
       z-index: 2;
     }
-    #yesBtn:hover{
-      transform: scale(1.08);
-      box-shadow: 0 20px 40px rgba(255,47,109,0.7);
-    }
 
     #noBtn{
       background: white;
@@ -223,7 +218,6 @@
       transform: scale(var(--noScale, 1));
     }
 
-    /* ✅ Panic shake */
     @keyframes panicShake {
       0%   { transform: translateX(0) rotate(0deg) scale(var(--noScale, 1)); }
       20%  { transform: translateX(-3px) rotate(-2deg) scale(var(--noScale, 1)); }
@@ -232,11 +226,8 @@
       80%  { transform: translateX(2px) rotate(1deg) scale(var(--noScale, 1)); }
       100% { transform: translateX(0) rotate(0deg) scale(var(--noScale, 1)); }
     }
-    .panic{
-      animation: panicShake 130ms ease-in-out 2;
-    }
+    .panic{ animation: panicShake 130ms ease-in-out 2; }
 
-    /* ✅ Poof vanish */
     @keyframes poofVanish {
       0%   { transform: scale(var(--noScale, 1)); opacity: 1; filter: blur(0); }
       55%  { transform: scale(0.7); opacity: 0.75; filter: blur(0.2px); }
@@ -277,7 +268,6 @@
       100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.2); opacity: 0; }
     }
 
-    /* ✅ Confetti */
     .confetti {
       position: fixed;
       inset: 0;
@@ -307,10 +297,7 @@
       to{ opacity: 1; transform: translateY(0); }
     }
 
-    .love h2{
-      font-size: 2.05rem;
-      margin: 8px 0 10px;
-    }
+    .love h2{ font-size: 2.05rem; margin: 8px 0 10px; }
 
     .couple-pic{
       width: 100%;
@@ -329,7 +316,6 @@
       margin: 0;
     }
 
-    /* ✅ Memory carousel */
     .mem{
       margin: 14px auto 0;
       padding: 12px 14px;
@@ -349,36 +335,19 @@
       transform: translateY(10px);
       transition: opacity 260ms ease, transform 260ms ease;
     }
-    .mem p.show{
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .mem p.show{ opacity: 1; transform: translateY(0); }
 
-    .signature{
-      margin-top: 18px;
-      font-style: italic;
-      opacity: 0.95;
-    }
+    .signature{ margin-top: 18px; font-style: italic; opacity: 0.95; }
 
     @media (max-width: 380px){
       .profile-pic{ width: 200px; height: 200px; }
       .mini-pic{ width: 105px; height: 105px; }
       h1{ font-size: 2.1rem; }
     }
-
-    @media (prefers-reduced-motion: reduce){
-      .hearts span, .confetti span, .card, .love { animation: none !important; }
-      #yesBtn { transition: none !important; }
-      .mem p{ transition: none !important; }
-      .countdown{ animation: none !important; }
-      .countdown::after{ animation: none !important; }
-      .cd-heart{ animation: none !important; }
-    }
   </style>
 </head>
 
 <body>
-  <!-- ✅ MP3 (place song.mp3 in same folder as index.html) -->
   <audio id="bgMusic" preload="auto" loop>
     <source src="song.mp3" type="audio/mpeg" />
   </audio>
@@ -396,7 +365,6 @@
         </div>
       </div>
 
-      <!-- ✅ Countdown (Sydney time) -->
       <div class="countdown" aria-live="polite">
         <span class="cd-heart">💖</span>
         <span>Valentine’s in</span>
@@ -413,8 +381,8 @@
       <p class="tiny-note" id="noteText"></p>
 
       <div class="buttons" id="buttons">
-        <button id="yesBtn">Yes 💕</button>
-        <button id="noBtn">No 😅</button>
+        <button id="yesBtn" type="button">Yes 💕</button>
+        <button id="noBtn" type="button">No 😅</button>
       </div>
 
       <div class="love" id="love">
@@ -428,7 +396,6 @@
           I can’t wait to make beautiful memories with you this Valentine’s.
         </p>
 
-        <!-- ✅ Memory carousel -->
         <div class="mem" aria-live="polite">
           <p id="memLine"></p>
         </div>
@@ -453,29 +420,24 @@
     const noteText = document.getElementById("noteText");
     const heartsLayer = document.getElementById("hearts");
 
-    // ✅ MP3 element
     const bgMusic = document.getElementById("bgMusic");
 
-    // Countdown DOM
     const cdDays = document.getElementById("cdDays");
     const cdHours = document.getElementById("cdHours");
     const cdMins = document.getElementById("cdMins");
     const cdSecs = document.getElementById("cdSecs");
 
-    // Memory carousel DOM
     const memLine = document.getElementById("memLine");
 
     let dodges = 0;
     const maxDodges = 7;
     let vanished = false;
 
-    /* ✅ No button shrink */
     const startScale = 1.0;
     const endScale = 0.55;
     function setNoScale(scale){ noBtn.style.setProperty("--noScale", scale); }
     setNoScale(startScale);
 
-    /* ✅ Floating hearts */
     const HEARTS = ["💗","💖","💕","💘","💝","💓","✨","🌸"];
     function createFloatingHeart(){
       const h = document.createElement("span");
@@ -484,99 +446,16 @@
       const size = 14 + Math.random() * 18;
       const dur = 5 + Math.random() * 6;
       const drift = (Math.random() * 90 - 45).toFixed(1) + "px";
-
       h.style.left = left + "vw";
       h.style.fontSize = size + "px";
       h.style.animationDuration = dur + "s";
       h.style.setProperty("--drift", drift);
-
       heartsLayer.appendChild(h);
       setTimeout(() => h.remove(), (dur * 1000) + 200);
     }
     for (let i = 0; i < 16; i++) setTimeout(createFloatingHeart, i * 200);
     setInterval(createFloatingHeart, 420);
 
-    /* ✅ Short UI sounds (optional) */
-    let audioCtx = null;
-    function getCtx(){
-      if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      return audioCtx;
-    }
-
-    function popSound(){
-      try{
-        const ctx = getCtx();
-        const o = ctx.createOscillator();
-        const g = ctx.createGain();
-
-        o.type = "triangle";
-        o.frequency.setValueAtTime(520, ctx.currentTime);
-        o.frequency.exponentialRampToValueAtTime(220, ctx.currentTime + 0.08);
-
-        g.gain.setValueAtTime(0.0001, ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.01);
-        g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.10);
-
-        o.connect(g); g.connect(ctx.destination);
-        o.start(); o.stop(ctx.currentTime + 0.11);
-      }catch(e){}
-    }
-
-    function clapSound(){
-      try{
-        const ctx = getCtx();
-        const bufferSize = ctx.sampleRate * 0.12;
-        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++){
-          data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
-        }
-
-        const noise = ctx.createBufferSource();
-        noise.buffer = buffer;
-
-        const filter = ctx.createBiquadFilter();
-        filter.type = "bandpass";
-        filter.frequency.value = 1400;
-        filter.Q.value = 0.8;
-
-        const g = ctx.createGain();
-        g.gain.setValueAtTime(0.0001, ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.7, ctx.currentTime + 0.01);
-        g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.12);
-
-        noise.connect(filter);
-        filter.connect(g);
-        g.connect(ctx.destination);
-
-        noise.start();
-        noise.stop(ctx.currentTime + 0.12);
-      }catch(e){}
-    }
-
-    function chimeSound(){
-      try{
-        const ctx = getCtx();
-        const freqs = [784, 988, 1175];
-        freqs.forEach((f, idx) => {
-          const o = ctx.createOscillator();
-          const g = ctx.createGain();
-          o.type = "sine";
-          o.frequency.setValueAtTime(f, ctx.currentTime);
-
-          const t0 = ctx.currentTime + idx * 0.03;
-          g.gain.setValueAtTime(0.0001, t0);
-          g.gain.exponentialRampToValueAtTime(0.18, t0 + 0.01);
-          g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.22);
-
-          o.connect(g); g.connect(ctx.destination);
-          o.start(t0);
-          o.stop(t0 + 0.25);
-        });
-      }catch(e){}
-    }
-
-    /* ✅ Poof */
     function makePoofAtNoButton(){
       const rect = noBtn.getBoundingClientRect();
       const poof = document.createElement("div");
@@ -593,38 +472,16 @@
       vanished = true;
       noteText.textContent = "Okay okay… you win 😌";
       makePoofAtNoButton();
-      popSound();
       noBtn.classList.add("fade-out");
       setTimeout(() => { noBtn.style.display = "none"; }, 450);
     }
 
-    /* ✅ Confetti */
-    function confettiBurst(){
-      const wrap = document.createElement("div");
-      wrap.className = "confetti";
-      const emojis = ["💖","💕","💘","✨","🌸","💗"];
-      const count = 52;
-
-      for(let i=0;i<count;i++){
-        const s = document.createElement("span");
-        s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
-        s.style.left = Math.random()*100 + "vw";
-        s.style.animationDelay = (Math.random()*0.25) + "s";
-        s.style.fontSize = (16 + Math.random()*12) + "px";
-        wrap.appendChild(s);
-      }
-      document.body.appendChild(wrap);
-      setTimeout(() => wrap.remove(), 1400);
-    }
-
-    /* ✅ Panic shake restart */
     function panic(){
       noBtn.classList.remove("panic");
       void noBtn.offsetWidth;
       noBtn.classList.add("panic");
     }
 
-    /* ✅ Dodge */
     function teleportInsideBox(){
       if (dodges >= maxDodges || vanished) return;
 
@@ -668,7 +525,6 @@
       setNoScale(newScale);
 
       if (dodges >= 3) panic();
-      popSound();
 
       if (dodges === 2) noteText.textContent = "No? really? 😭";
       if (dodges === 4) noteText.textContent = "It’s literally panicking now 😌";
@@ -677,20 +533,19 @@
       if (dodges >= maxDodges) vanishNoButton();
     }
 
+    // safer: no mousemove spam
     noBtn.addEventListener("mouseenter", teleportInsideBox);
-    noBtn.addEventListener("mousemove", teleportInsideBox);
     noBtn.addEventListener("touchstart", (e) => {
       e.preventDefault();
       teleportInsideBox();
     }, { passive: false });
 
-    /* ✅ Memory carousel (FIXED commas) */
     const memories = [
       "I love your laugh.",
       "I love how you care.",
       "I love the way you look at me.",
       "I love how you roll your eyes at me.",
-      "I love how you beat me up.",
+      "I love how you beat me up."
     ];
 
     function startMemoryCarousel(){
@@ -714,19 +569,30 @@
       showNext();
     }
 
-    /* ✅ YES click: play song.mp3 + show love + memories */
+    function confettiBurst(){
+      const wrap = document.createElement("div");
+      wrap.className = "confetti";
+      const emojis = ["💖","💕","💘","✨","🌸","💗"];
+      const count = 52;
+
+      for(let i=0;i<count;i++){
+        const s = document.createElement("span");
+        s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+        s.style.left = Math.random()*100 + "vw";
+        s.style.animationDelay = (Math.random()*0.25) + "s";
+        s.style.fontSize = (16 + Math.random()*12) + "px";
+        wrap.appendChild(s);
+      }
+      document.body.appendChild(wrap);
+      setTimeout(() => wrap.remove(), 1400);
+    }
+
     yesBtn.addEventListener("click", async () => {
-      // Start MP3 (reliable on mobile because user clicked)
+      // MP3 play on user click (works on phones)
       try{
         bgMusic.volume = 0.85;
         await bgMusic.play();
-      }catch(e){
-        // If something blocks it, page still works
-      }
-
-      // Optional celebration sounds (remove if you want only MP3)
-      clapSound();
-      chimeSound();
+      }catch(e){}
 
       confettiBurst();
 
@@ -737,11 +603,9 @@
       love.style.display = "block";
 
       startMemoryCarousel();
-
       love.scrollIntoView({ behavior: "smooth", block: "start" });
     });
 
-    /* ✅ Countdown to Valentine’s Day (Sydney/NSW time) */
     function getSydneyNow(){
       const parts = new Intl.DateTimeFormat("en-AU", {
         timeZone: "Australia/Sydney",
@@ -761,8 +625,6 @@
       const hh = Number(get("hour"));
       const mm = Number(get("minute"));
       const ss = Number(get("second"));
-
-      // Represent Sydney wall-clock time in a Date object
       return new Date(y, m - 1, d, hh, mm, ss);
     }
 
@@ -770,7 +632,6 @@
       const nowSydney = getSydneyNow();
       const year = nowSydney.getFullYear();
 
-      // Feb 14 00:00 Sydney time
       let target = new Date(year, 1, 14, 0, 0, 0);
       if (nowSydney.getTime() >= target.getTime()){
         target = new Date(year + 1, 1, 14, 0, 0, 0);
