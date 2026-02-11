@@ -122,7 +122,7 @@
       background: rgba(255,255,255,0.20);
       border: 1px solid rgba(255,255,255,0.28);
       box-shadow: 0 16px 34px rgba(0,0,0,0.14);
-      margin: 0 auto 12px;
+      margin: 0 auto 10px;
       font-size: 0.98rem;
       line-height: 1.2;
       backdrop-filter: blur(12px);
@@ -130,13 +130,12 @@
     }
     .countdown b{ font-weight: 900; }
     .countdown .dot{ opacity: 0.85; }
-    .cd-heart{ display:inline-block; }
 
     .musicBar{
       display:flex;
       justify-content:center;
       gap:10px;
-      margin: 0 auto 8px;
+      margin: 0 auto 6px;
       flex-wrap: wrap;
     }
     .musicBtn{
@@ -162,7 +161,6 @@
       margin: 0 0 10px;
       opacity: 0.95;
     }
-
     .tiny-note{
       font-size: 0.95rem;
       opacity: 0.9;
@@ -189,7 +187,7 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* ✅ YES ALWAYS ON TOP */
+    /* ✅ YES always clickable */
     #yesBtn{
       position: relative;
       z-index: 10;
@@ -198,9 +196,9 @@
       box-shadow: 0 14px 28px rgba(255,47,109,0.55);
       transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
-    #yesBtn:hover{ transform: scale(1.08); }
+    #yesBtn:hover{ transform: scale(1.06); }
 
-    /* ✅ NO ALWAYS BELOW YES */
+    /* ✅ NO stays below YES */
     #noBtn{
       position: absolute;
       z-index: 2;
@@ -336,7 +334,7 @@
       </div>
 
       <div class="countdown" aria-live="polite">
-        <span class="cd-heart">💖</span>
+        <span>💖</span>
         <span>Valentine’s in</span>
         <span class="dot">•</span>
         <span><b id="cdDays">--</b>d</span>
@@ -414,7 +412,7 @@
       const left = Math.random() * 100;
       const size = 14 + Math.random() * 20;
       const dur = 4 + Math.random() * 5;
-      const drift = (Math.random() * 160 - 80).toFixed(1) + "px";
+      const drift = (Math.random() * 180 - 90).toFixed(1) + "px";
 
       h.style.left = left + "vw";
       h.style.fontSize = size + "px";
@@ -424,8 +422,8 @@
       heartsLayer.appendChild(h);
       setTimeout(() => h.remove(), (dur * 1000) + 300);
     }
-    for (let i = 0; i < 16; i++) setTimeout(createFloatingHeart, i * 140);
-    setInterval(createFloatingHeart, 300);
+    for (let i = 0; i < 16; i++) setTimeout(createFloatingHeart, i * 120);
+    setInterval(createFloatingHeart, 280);
 
     // Confetti
     function confettiBurst(){
@@ -445,22 +443,32 @@
       setTimeout(() => wrap.remove(), 1400);
     }
 
-    // Music controls (no popup alerts)
+    // ✅ Music controls: stop propagation so they NEVER trigger Yes
     async function playMusic(){
       try{
         musicNote.textContent = "";
         bgMusic.volume = 0.9;
         await bgMusic.play();
       }catch(e){
-        musicNote.textContent = "Music couldn’t start. (If the file is not a real MP3, convert it and re-upload.)";
+        // This happens when the file isn't playable OR browser policy blocks it
+        musicNote.textContent = "Music couldn’t start. If the file is not a real MP3, convert and re-upload.";
       }
     }
     function pauseMusic(){ bgMusic.pause(); }
 
-    playMusicBtn.addEventListener("click", playMusic);
-    pauseMusicBtn.addEventListener("click", pauseMusic);
+    playMusicBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      playMusic();
+    });
 
-    // No button dodge FAST + FAR, and NEVER overlap Yes
+    pauseMusicBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      pauseMusic();
+    });
+
+    // No button dodge FAST + FAR and avoid Yes
     let dodges = 0;
     const maxDodges = 10;
     let vanished = false;
@@ -503,13 +511,12 @@
       const maxX = Math.max(0, bw - noRect.width);
       const maxY = Math.max(0, bh - noRect.height);
 
-      // Keep it FAR away from YES
       const yesCX = (yesRect.left + yesRect.width/2) - btnRect.left;
       const yesCY = (yesRect.top + yesRect.height/2) - btnRect.top;
 
       let best = {x: 0, y: 0, score: -1};
 
-      for (let i = 0; i < 20; i++){
+      for (let i = 0; i < 25; i++){
         const x = Math.random() * maxX;
         const y = Math.random() * maxY;
 
@@ -517,35 +524,28 @@
         const dy = (y + noRect.height/2) - yesCY;
         const dist = Math.sqrt(dx*dx + dy*dy);
 
-        // Hard rule: do not allow overlap-ish (distance threshold)
-        if (dist < 140) continue;
-
+        // never overlap/near the Yes button
+        if (dist < 160) continue;
         if (dist > best.score) best = {x, y, score: dist};
       }
 
-      // If all tries failed, just push it to a corner
-      if (best.score < 0){
-        best = {x: 0, y: 0, score: 0};
-      }
-
-      // SUPER FAST movement
-      noBtn.style.transition = "left 30ms linear, top 30ms linear";
+      // ultra fast motion + far distance
+      noBtn.style.transition = "left 25ms linear, top 25ms linear";
       noBtn.style.left = best.x + "px";
       noBtn.style.top  = best.y + "px";
 
       dodges++;
-      const t = dodges / maxDodges;
-      setNoScale(startScale + (endScale - startScale) * t);
+      setNoScale(startScale + (endScale - startScale) * (dodges / maxDodges));
 
       if (dodges === 2) noteText.textContent = "No? really? 😭";
       if (dodges === 6) noteText.textContent = "Stop chasing me 😭";
       if (dodges >= maxDodges) vanishNoButton();
     }
 
-    // IMPORTANT: move NO away immediately so it doesn't cover YES on load
+    // Move NO away on load so it doesn't sit on top of YES
     window.addEventListener("load", () => {
-      setTimeout(dodgeFar, 100);
-      setTimeout(dodgeFar, 180);
+      setTimeout(dodgeFar, 120);
+      setTimeout(dodgeFar, 220);
     });
 
     noBtn.addEventListener("mouseenter", dodgeFar);
@@ -580,8 +580,11 @@
       showNext();
     }
 
-    // YES button (will always work now)
-    yesBtn.addEventListener("click", async () => {
+    // ✅ YES click only (won't be triggered by other buttons now)
+    yesBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
       await playMusic();
       confettiBurst();
 
