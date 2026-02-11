@@ -212,7 +212,7 @@
       box-shadow: 0 20px 40px rgba(255,47,109,0.7);
     }
 
-    /* ✅ No button stays INSIDE buttons box */
+    /* No button stays inside the buttons box */
     #noBtn{
       background: white;
       color: #ff2f6d;
@@ -436,15 +436,14 @@
           🎵 Our song: <b>You’re Beautiful — James Blunt</b>
         </p>
 
-        <!-- ✅ YouTube appears AFTER clicking Yes -->
         <div class="song">
           <div class="song-title">🎬 Tap play</div>
           <div class="yt-wrap">
-            <!-- Replace VIDEO_ID with the exact YouTube video id you want -->
+            <!-- ✅ Official "You're Beautiful" video -->
             <iframe
               class="yt"
-              src="https://www.youtube.com/watch?v=oofSnsGkops&list=RDoofSnsGkops&start_radio=1"
-              title="YouTube video player"
+              src="https://www.youtube.com/embed/oofSnsGkops?rel=0&modestbranding=1"
+              title="You’re Beautiful — James Blunt"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowfullscreen>
             </iframe>
@@ -543,7 +542,7 @@
         setTimeout(() => poof.remove(), 650);
       }
 
-      /* ✅ No button dodge INSIDE the buttons box */
+      /* No button dodge inside the buttons box */
       let dodges = 0;
       const maxDodges = 6;
       let vanished = false;
@@ -558,7 +557,6 @@
         const yesR = yesBtn.getBoundingClientRect();
 
         const pad = 10;
-
         const maxX = box.width - noR.width - pad;
         const maxY = box.height - noR.height - pad;
 
@@ -567,10 +565,10 @@
 
         const avoidRadius = 140;
 
-        let best = { x: pad, y: pad, score: -1 };
-
         const curCX = (noR.left - box.left) + noR.width/2;
         const curCY = (noR.top  - box.top ) + noR.height/2;
+
+        let best = { x: pad, y: pad, score: -1 };
 
         for (let i = 0; i < 90; i++){
           const x = pad + Math.random() * Math.max(1, maxX - pad);
