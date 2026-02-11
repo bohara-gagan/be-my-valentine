@@ -452,241 +452,275 @@
     </div>
   </div>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const noBtn = document.getElementById("noBtn");
-      const yesBtn = document.getElementById("yesBtn");
-      const question = document.getElementById("question");
-      const buttons = document.getElementById("buttons");
-      const love = document.getElementById("love");
-      const pickupText = document.getElementById("pickupText");
-      const noteText = document.getElementById("noteText");
-      const heartsLayer = document.getElementById("hearts");
+ <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const question = document.getElementById("question");
+    const buttons = document.getElementById("buttons");
+    const love = document.getElementById("love");
+    const pickupText = document.getElementById("pickupText");
+    const noteText = document.getElementById("noteText");
+    const heartsLayer = document.getElementById("hearts");
 
-      const cdDays = document.getElementById("cdDays");
-      const cdHours = document.getElementById("cdHours");
-      const cdMins = document.getElementById("cdMins");
-      const cdSecs = document.getElementById("cdSecs");
+    const cdDays = document.getElementById("cdDays");
+    const cdHours = document.getElementById("cdHours");
+    const cdMins = document.getElementById("cdMins");
+    const cdSecs = document.getElementById("cdSecs");
 
-      const memLine = document.getElementById("memLine");
+    const memLine = document.getElementById("memLine");
 
-      /* Floating hearts */
-      const HEARTS = ["💗","💖","💕","💘","💝","💓","✨","🌸"];
-      function createFloatingHeart(){
-        const h = document.createElement("span");
-        h.textContent = HEARTS[Math.floor(Math.random() * HEARTS.length)];
-        const left = Math.random() * 100;
-        const size = 14 + Math.random() * 20;
-        const dur = 4 + Math.random() * 5;
-        const drift = (Math.random() * 260 - 130).toFixed(1) + "px";
+    /* ---------- Floating hearts ---------- */
+    const HEARTS = ["💗","💖","💕","💘","💝","💓","✨","🌸"];
+    function createFloatingHeart(){
+      const h = document.createElement("span");
+      h.textContent = HEARTS[Math.floor(Math.random() * HEARTS.length)];
+      const left = Math.random() * 100;
+      const size = 14 + Math.random() * 20;
+      const dur = 4 + Math.random() * 5;
+      const drift = (Math.random() * 260 - 130).toFixed(1) + "px";
 
-        h.style.left = left + "vw";
-        h.style.fontSize = size + "px";
-        h.style.animationDuration = dur + "s";
-        h.style.setProperty("--drift", drift);
+      h.style.left = left + "vw";
+      h.style.fontSize = size + "px";
+      h.style.animationDuration = dur + "s";
+      h.style.setProperty("--drift", drift);
 
-        heartsLayer.appendChild(h);
-        setTimeout(() => h.remove(), (dur * 1000) + 300);
+      heartsLayer.appendChild(h);
+      setTimeout(() => h.remove(), (dur * 1000) + 300);
+    }
+    for (let i = 0; i < 16; i++) setTimeout(createFloatingHeart, i * 120);
+    setInterval(createFloatingHeart, 260);
+
+    /* ---------- Confetti ---------- */
+    function confettiBurst(){
+      const wrap = document.createElement("div");
+      wrap.className = "confetti";
+      const emojis = ["💖","💕","💘","✨","🌸","💗"];
+      const count = 70;
+
+      for(let i=0;i<count;i++){
+        const s = document.createElement("span");
+        s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+        s.style.left = Math.random()*100 + "vw";
+        s.style.animationDelay = (Math.random()*0.18) + "s";
+        s.style.fontSize = (16 + Math.random()*14) + "px";
+        wrap.appendChild(s);
       }
-      for (let i = 0; i < 16; i++) setTimeout(createFloatingHeart, i * 120);
-      setInterval(createFloatingHeart, 260);
+      document.body.appendChild(wrap);
+      setTimeout(() => wrap.remove(), 1400);
+    }
 
-      /* Confetti */
-      function confettiBurst(){
-        const wrap = document.createElement("div");
-        wrap.className = "confetti";
-        const emojis = ["💖","💕","💘","✨","🌸","💗"];
-        const count = 70;
+    /* ---------- Poof ---------- */
+    function makePoofAt(el){
+      const rect = el.getBoundingClientRect();
+      const poof = document.createElement("div");
+      poof.className = "poof";
+      poof.style.left = (rect.left + rect.width / 2 + window.scrollX) + "px";
+      poof.style.top  = (rect.top + rect.height / 2 + window.scrollY) + "px";
+      for (let i = 0; i < 6; i++) poof.appendChild(document.createElement("span"));
+      document.body.appendChild(poof);
+      setTimeout(() => poof.remove(), 650);
+    }
 
-        for(let i=0;i<count;i++){
-          const s = document.createElement("span");
-          s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
-          s.style.left = Math.random()*100 + "vw";
-          s.style.animationDelay = (Math.random()*0.18) + "s";
-          s.style.fontSize = (16 + Math.random()*14) + "px";
-          wrap.appendChild(s);
-        }
-        document.body.appendChild(wrap);
-        setTimeout(() => wrap.remove(), 1400);
-      }
+    /* ---------- NO button: FULL SCREEN dodge (6 times) ---------- */
+    let dodges = 0;
+    const maxDodges = 6;
+    let vanished = false;
 
-      /* Poof */
-      function makePoofAt(el){
-        const rect = el.getBoundingClientRect();
-        const poof = document.createElement("div");
-        poof.className = "poof";
-        poof.style.left = (rect.left + rect.width / 2 + window.scrollX) + "px";
-        poof.style.top  = (rect.top + rect.height / 2 + window.scrollY) + "px";
-        for (let i = 0; i < 6; i++) poof.appendChild(document.createElement("span"));
-        document.body.appendChild(poof);
-        setTimeout(() => poof.remove(), 650);
-      }
+    // Make it roam the whole screen
+    noBtn.style.position = "fixed";
+    noBtn.style.left = "65vw";
+    noBtn.style.top = "70vh";
 
-      /* NO dodge: fast + far (choose farthest sample) */
-      let dodges = 0;
-      const maxDodges = 10;
-      let vanished = false;
+    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
 
-      function dodgeFar(){
-        if (vanished || dodges >= maxDodges) return;
+    function dodgeEverywhere(){
+      if (vanished || dodges >= maxDodges) return;
 
-        const bw = buttons.clientWidth;
-        const bh = buttons.clientHeight;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
 
-        const btnRect = buttons.getBoundingClientRect();
-        const yesRect = yesBtn.getBoundingClientRect();
-        const noRect = noBtn.getBoundingClientRect();
+      const noRect = noBtn.getBoundingClientRect();
+      const yesRect = yesBtn.getBoundingClientRect();
 
-        const maxX = Math.max(0, bw - noRect.width);
-        const maxY = Math.max(0, bh - noRect.height);
+      // keep button inside the viewport with a padding so it doesn't stick to edges
+      const pad = 14;
+      const maxX = vw - noRect.width - pad;
+      const maxY = vh - noRect.height - pad;
 
-        const yesCX = (yesRect.left + yesRect.width/2) - btnRect.left;
-        const yesCY = (yesRect.top + yesRect.height/2) - btnRect.top;
+      // avoid landing near YES button
+      const avoidRadius = 220;
+      const yesCX = yesRect.left + yesRect.width / 2;
+      const yesCY = yesRect.top + yesRect.height / 2;
 
-        let best = {x: 0, y: 0, score: -1};
+      // Pick the "farthest" out of many random options (fast + far feel)
+      let best = { x: pad, y: pad, score: -1 };
 
-        for (let i = 0; i < 40; i++){
-          const x = Math.random() * maxX;
-          const y = Math.random() * maxY;
+      for (let i = 0; i < 55; i++){
+        const x = pad + Math.random() * Math.max(0, maxX - pad);
+        const y = pad + Math.random() * Math.max(0, maxY - pad);
 
-          const dx = (x + noRect.width/2) - yesCX;
-          const dy = (y + noRect.height/2) - yesCY;
-          const dist = Math.sqrt(dx*dx + dy*dy);
+        const cx = x + noRect.width / 2;
+        const cy = y + noRect.height / 2;
 
-          if (dist < 190) continue; // stay away from YES
-          if (dist > best.score) best = {x, y, score: dist};
-        }
+        const dx = cx - yesCX;
+        const dy = cy - yesCY;
+        const distToYes = Math.sqrt(dx*dx + dy*dy);
 
-        noBtn.style.transition = "left 15ms linear, top 15ms linear";
-        noBtn.style.left = best.x + "px";
-        noBtn.style.top  = best.y + "px";
+        // prefer far from YES, and also far from current position (bigger jump)
+        const curCX = noRect.left + noRect.width / 2;
+        const curCY = noRect.top + noRect.height / 2;
+        const jumpDx = cx - curCX;
+        const jumpDy = cy - curCY;
+        const jumpDist = Math.sqrt(jumpDx*jumpDx + jumpDy*jumpDy);
 
-        dodges++;
+        if (distToYes < avoidRadius) continue;
 
-        if (dodges === 2) noteText.textContent = "No? really? 😭";
-        if (dodges === 6) noteText.textContent = "Stop chasing me 😭";
-
-        if (dodges >= maxDodges){
-          vanished = true;
-          noteText.textContent = "Okay okay… you win 😌";
-          makePoofAt(noBtn);
-          noBtn.classList.add("fade-out");
-          setTimeout(() => { noBtn.style.display = "none"; }, 450);
-        }
-      }
-
-      // Force it to move away immediately so it never blocks the YES button
-      setTimeout(dodgeFar, 80);
-      setTimeout(dodgeFar, 160);
-
-      // Make it dodge in more situations (so it feels fast and “impossible”)
-      noBtn.addEventListener("mouseenter", dodgeFar);
-      noBtn.addEventListener("mousemove", dodgeFar);
-      noBtn.addEventListener("pointerenter", dodgeFar);
-      noBtn.addEventListener("pointermove", dodgeFar);
-
-      // Mobile touch
-      noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); dodgeFar(); }, { passive: false });
-      noBtn.addEventListener("touchmove", (e) => { e.preventDefault(); dodgeFar(); }, { passive: false });
-
-      /* Memory carousel */
-      const memories = [
-        "I love your laugh.",
-        "I love how you care.",
-        "I love our little moments.",
-        "I love the way you look at me.",
-        "I love you. That’s it."
-      ];
-
-      function startMemoryCarousel(){
-        let i = 0;
-        memLine.textContent = "";
-        memLine.classList.remove("show");
-
-        const showNext = () => {
-          if (i >= memories.length) return;
-
-          memLine.classList.remove("show");
-          setTimeout(() => {
-            memLine.textContent = "💗 " + memories[i];
-            memLine.classList.add("show");
-            i++;
-          }, 120);
-
-          setTimeout(showNext, 1200);
-        };
-
-        showNext();
+        const score = distToYes + jumpDist * 0.7;
+        if (score > best.score) best = { x, y, score };
       }
 
-      /* YES click */
-      yesBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
+      // Make movement feel instant / snappy
+      noBtn.style.transition = "left 12ms linear, top 12ms linear, transform 90ms ease";
+      noBtn.style.left = clamp(best.x, pad, maxX) + "px";
+      noBtn.style.top  = clamp(best.y, pad, maxY) + "px";
 
-        confettiBurst();
+      // tiny "pop" scale so it feels alive
+      noBtn.style.transform = "scale(0.92)";
+      setTimeout(() => { noBtn.style.transform = "scale(1)"; }, 85);
 
-        question.style.display = "none";
-        buttons.style.display = "none";
-        pickupText.style.display = "none";
-        noteText.style.display = "none";
+      dodges++;
 
-        love.style.display = "block";
-        startMemoryCarousel();
-        love.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
+      if (dodges === 2) noteText.textContent = "No? really? 😭";
+      if (dodges === 4) noteText.textContent = "Stop chasing me 😭";
+      if (dodges === 5) noteText.textContent = "Last chance 😌";
 
-      /* Countdown to Valentine’s Day (Sydney/NSW time) */
-      function getSydneyNow(){
-        const parts = new Intl.DateTimeFormat("en-AU", {
-          timeZone: "Australia/Sydney",
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-          hour12: false
-        }).formatToParts(new Date());
-
-        const get = (type) => parts.find(p => p.type === type)?.value;
-        return new Date(
-          Number(get("year")),
-          Number(get("month")) - 1,
-          Number(get("day")),
-          Number(get("hour")),
-          Number(get("minute")),
-          Number(get("second"))
-        );
+      if (dodges >= maxDodges){
+        vanished = true;
+        noteText.textContent = "Okay okay… you win 😌";
+        makePoofAt(noBtn);
+        noBtn.classList.add("fade-out");
+        setTimeout(() => { noBtn.style.display = "none"; }, 450);
       }
+    }
 
-      function updateCountdown(){
-        const nowSydney = getSydneyNow();
-        const year = nowSydney.getFullYear();
-
-        let target = new Date(year, 1, 14, 0, 0, 0);
-        if (nowSydney.getTime() >= target.getTime()){
-          target = new Date(year + 1, 1, 14, 0, 0, 0);
-        }
-
-        let diff = target.getTime() - nowSydney.getTime();
-        if (diff < 0) diff = 0;
-
-        const totalSeconds = Math.floor(diff / 1000);
-        const days = Math.floor(totalSeconds / (3600 * 24));
-        const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
-        const mins = Math.floor((totalSeconds % 3600) / 60);
-        const secs = totalSeconds % 60;
-
-        cdDays.textContent = String(days);
-        cdHours.textContent = String(hours).padStart(2, "0");
-        cdMins.textContent = String(mins).padStart(2, "0");
-        cdSecs.textContent = String(secs).padStart(2, "0");
-      }
-
-      updateCountdown();
-      setInterval(updateCountdown, 1000);
+    // Trigger dodging aggressively
+    const triggers = ["mouseenter","mousemove","pointerenter","pointermove","touchstart","touchmove"];
+    triggers.forEach(evt => {
+      noBtn.addEventListener(evt, (e) => {
+        if (evt.startsWith("touch")) e.preventDefault();
+        dodgeEverywhere();
+      }, { passive: false });
     });
-  </script>
+
+    // Move it away immediately so it never blocks YES
+    setTimeout(dodgeEverywhere, 80);
+    setTimeout(dodgeEverywhere, 160);
+
+    // Recalculate positioning on resize
+    window.addEventListener("resize", () => {
+      if (!vanished) dodgeEverywhere();
+    });
+
+    /* ---------- Memory carousel ---------- */
+    const memories = [
+      "I love your laugh.",
+      "I love how you care.",
+      "I love our little moments.",
+      "I love the way you look at me.",
+      "I love you. That’s it."
+    ];
+
+    function startMemoryCarousel(){
+      let i = 0;
+      memLine.textContent = "";
+      memLine.classList.remove("show");
+
+      const showNext = () => {
+        if (i >= memories.length) return;
+
+        memLine.classList.remove("show");
+        setTimeout(() => {
+          memLine.textContent = "💗 " + memories[i];
+          memLine.classList.add("show");
+          i++;
+        }, 120);
+
+        setTimeout(showNext, 1200);
+      };
+
+      showNext();
+    }
+
+    /* ---------- YES click ---------- */
+    yesBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      confettiBurst();
+
+      question.style.display = "none";
+      buttons.style.display = "none";
+      pickupText.style.display = "none";
+      noteText.style.display = "none";
+
+      love.style.display = "block";
+      startMemoryCarousel();
+      love.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    /* ---------- Countdown (Sydney time) ---------- */
+    function getSydneyNow(){
+      const parts = new Intl.DateTimeFormat("en-AU", {
+        timeZone: "Australia/Sydney",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false
+      }).formatToParts(new Date());
+
+      const get = (type) => parts.find(p => p.type === type)?.value;
+      return new Date(
+        Number(get("year")),
+        Number(get("month")) - 1,
+        Number(get("day")),
+        Number(get("hour")),
+        Number(get("minute")),
+        Number(get("second"))
+      );
+    }
+
+    function updateCountdown(){
+      const nowSydney = getSydneyNow();
+      const year = nowSydney.getFullYear();
+
+      let target = new Date(year, 1, 14, 0, 0, 0);
+      if (nowSydney.getTime() >= target.getTime()){
+        target = new Date(year + 1, 1, 14, 0, 0, 0);
+      }
+
+      let diff = target.getTime() - nowSydney.getTime();
+      if (diff < 0) diff = 0;
+
+      const totalSeconds = Math.floor(diff / 1000);
+      const days = Math.floor(totalSeconds / (3600 * 24));
+      const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+      const mins = Math.floor((totalSeconds % 3600) / 60);
+      const secs = totalSeconds % 60;
+
+      cdDays.textContent = String(days);
+      cdHours.textContent = String(hours).padStart(2, "0");
+      cdMins.textContent = String(mins).padStart(2, "0");
+      cdSecs.textContent = String(secs).padStart(2, "0");
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  });
+</script>
+
 </body>
 </html>
