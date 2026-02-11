@@ -3,14 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <title>Be My Valentine 💖</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    body {
+  <style>
+    * { box-sizing: border-box; }
+
+    body{
       margin: 0;
       height: 100vh;
       display: flex;
@@ -22,9 +20,9 @@
       overflow: hidden;
     }
 
-    .card {
+    .card{
       width: 92%;
-      max-width: 420px;
+      max-width: 430px;
       background: rgba(255, 255, 255, 0.25);
       backdrop-filter: blur(18px);
       border-radius: 30px;
@@ -34,45 +32,60 @@
       animation: appear 0.9s ease;
     }
 
-    @keyframes appear {
-      from {
-        opacity: 0;
-        transform: translateY(35px) scale(0.95);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+    @keyframes appear{
+      from{ opacity: 0; transform: translateY(35px) scale(0.95); }
+      to{ opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    .profile-pic {
+    .photo-wrap{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+
+    .profile-pic{
       width: 155px;
       height: 155px;
       border-radius: 50%;
       object-fit: cover;
-      margin-bottom: 22px;
       border: 4px solid rgba(255,255,255,0.75);
       box-shadow: 0 18px 40px rgba(255,255,255,0.45);
     }
 
-    h1 {
-      font-size: 2.25rem;
-      margin-bottom: 12px;
+    .mini-photos{
+      display: flex;
+      gap: 12px;
     }
 
-    .pickup {
+    .mini-pic{
+      width: 64px;
+      height: 64px;
+      object-fit: cover;
+      border-radius: 16px;
+      border: 3px solid rgba(255,255,255,0.7);
+      box-shadow: 0 10px 22px rgba(0,0,0,0.18);
+    }
+
+    h1{
+      font-size: 2.25rem;
+      margin: 14px 0 10px;
+    }
+
+    .pickup{
       font-size: 1.05rem;
       line-height: 1.55;
-      margin-bottom: 30px;
+      margin: 0 0 30px;
       opacity: 0.95;
     }
 
-    .buttons {
+    .buttons{
       position: relative;
       height: 100px;
     }
 
-    button {
+    button{
       padding: 14px 32px;
       font-size: 1.1rem;
       border-radius: 999px;
@@ -81,19 +94,19 @@
       user-select: none;
     }
 
-    #yesBtn {
+    #yesBtn{
       background: linear-gradient(135deg, #ff2f6d, #ff1744);
       color: white;
       box-shadow: 0 14px 28px rgba(255,47,109,0.55);
       transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
 
-    #yesBtn:hover {
+    #yesBtn:hover{
       transform: scale(1.08);
       box-shadow: 0 20px 40px rgba(255,47,109,0.7);
     }
 
-    #noBtn {
+    #noBtn{
       background: white;
       color: #ff2f6d;
       position: absolute;
@@ -102,34 +115,40 @@
       box-shadow: 0 12px 22px rgba(0,0,0,0.25);
     }
 
-    .love {
+    .love{
       display: none;
       animation: fadeUp 1.2s ease forwards;
     }
 
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    @keyframes fadeUp{
+      from{ opacity: 0; transform: translateY(20px); }
+      to{ opacity: 1; transform: translateY(0); }
     }
 
-    .love h2 {
-      font-size: 2.1rem;
-      margin-bottom: 14px;
+    .love h2{
+      font-size: 2.05rem;
+      margin-bottom: 10px;
     }
 
-    .love p {
-      font-size: 1.1rem;
+    .couple-pic{
+      width: 100%;
+      max-width: 330px;
+      height: 210px;
+      object-fit: cover;
+      border-radius: 20px;
+      margin: 12px auto 18px;
+      border: 3px solid rgba(255,255,255,0.75);
+      box-shadow: 0 18px 45px rgba(0,0,0,0.25);
+    }
+
+    .love p{
+      font-size: 1.08rem;
       line-height: 1.7;
+      margin: 0;
     }
 
-    .signature {
-      margin-top: 26px;
+    .signature{
+      margin-top: 22px;
       font-style: italic;
       opacity: 0.95;
     }
@@ -137,11 +156,18 @@
 </head>
 
 <body>
-
   <div class="card">
 
-    <!-- CACHE-BUSTED IMAGE (THIS IS THE FIX) -->
-    <img src="sahara.jpg?v=3" alt="Sahara Chloe Kirkman" class="profile-pic" />
+    <div class="photo-wrap">
+      <!-- Main photo -->
+      <img src="sahara.jpg?v=9" alt="Sahara Chloe Kirkman" class="profile-pic" />
+
+      <!-- Two extra photos -->
+      <div class="mini-photos">
+        <img src="sahara2.jpg?v=9" alt="Sahara photo 2" class="mini-pic" />
+        <img src="sahara3.jpg?v=9" alt="Sahara photo 3" class="mini-pic" />
+      </div>
+    </div>
 
     <h1 id="question">Will you be my Valentine? 💖</h1>
 
@@ -156,14 +182,19 @@
 
     <div class="love" id="love">
       <h2>Sahara Chloe Kirkman 💗</h2>
+
+      <!-- Couple photo after YES -->
+      <img src="couple.jpg?v=9" alt="Us together" class="couple-pic" />
+
       <p>
         Thank you for saying yes, my love.<br>
-        Life is good with you in it.<br>
-        I can’t wait to make beautiful memories with you this Valentine’s. I am clumsy af but please keep beating sense into me.
+        You make my days brighter and my smiles wider.<br>
+        I can’t wait to make beautiful memories with you this Valentine’s.
       </p>
+
       <p class="signature">
         Always yours,<br>
-        Gagan<br>
+        <strong>Gagan</strong><br>
         ❤️
       </p>
     </div>
@@ -177,15 +208,26 @@
     const buttons = document.getElementById("buttons");
     const love = document.getElementById("love");
 
-    // NO BUTTON: FAR + FAST + UNAVOIDABLE
+    // FAST + FAR teleport on hover (works best on desktop)
     noBtn.addEventListener("mouseenter", () => {
       const maxX = window.innerWidth - noBtn.offsetWidth;
       const maxY = window.innerHeight - noBtn.offsetHeight;
 
       noBtn.style.transition = "none";
-      noBtn.style.left = Math.random() * maxX + "px";
-      noBtn.style.top = Math.random() * maxY + "px";
+      noBtn.style.left = (Math.random() * maxX) + "px";
+      noBtn.style.top  = (Math.random() * maxY) + "px";
     });
+
+    // Mobile: also dodge on tap
+    noBtn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      const maxX = window.innerWidth - noBtn.offsetWidth;
+      const maxY = window.innerHeight - noBtn.offsetHeight;
+
+      noBtn.style.transition = "none";
+      noBtn.style.left = (Math.random() * maxX) + "px";
+      noBtn.style.top  = (Math.random() * maxY) + "px";
+    }, { passive: false });
 
     yesBtn.addEventListener("click", () => {
       question.style.display = "none";
@@ -193,6 +235,5 @@
       love.style.display = "block";
     });
   </script>
-
 </body>
 </html>
