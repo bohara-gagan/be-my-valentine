@@ -25,8 +25,31 @@
       content:"";
       position: fixed;
       inset: 0;
-      z-index: -1;
+      z-index: -2;
       background: linear-gradient(135deg, #ff6f91, #ff9a9e);
+    }
+
+    /* ✅ Floating hearts layer (behind card) */
+    .hearts{
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: -1;
+    }
+    .hearts span{
+      position: absolute;
+      bottom: -24px;
+      opacity: 0.35;
+      filter: blur(0.1px);
+      animation: floatUp linear forwards;
+      will-change: transform, opacity;
+      text-shadow: 0 10px 20px rgba(0,0,0,0.20);
+    }
+    @keyframes floatUp{
+      0%   { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+      10%  { opacity: 0.40; }
+      100% { transform: translateY(-120vh) translateX(var(--drift)) rotate(260deg); opacity: 0; }
     }
 
     /* ✅ center but allow scroll */
@@ -194,6 +217,26 @@
       pointer-events: none;
     }
 
+    /* ✅ Confetti burst for YES */
+    .confetti {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 999;
+    }
+    .confetti span{
+      position: absolute;
+      top: -10px;
+      font-size: 18px;
+      animation: fall 1200ms ease-in forwards;
+      opacity: 0.95;
+      filter: drop-shadow(0 12px 18px rgba(0,0,0,0.18));
+    }
+    @keyframes fall{
+      to { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
+
     .love{
       display: none;
       margin-top: 10px;
@@ -238,15 +281,23 @@
       .mini-pic{ width: 105px; height: 105px; }
       h1{ font-size: 2.1rem; }
     }
+
+    /* ✅ Respect reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .hearts span, .confetti span, .card, .love { animation: none !important; }
+      #yesBtn { transition: none !important; }
+    }
   </style>
 </head>
 
 <body>
+  <!-- ✅ Floating hearts background -->
+  <div class="hearts" id="hearts" aria-hidden="true"></div>
+
   <div class="page">
     <div class="card">
 
       <div class="photo-wrap">
-        <!-- ✅ Filenames match your GitHub repo exactly -->
         <img src="sahara.jpg" alt="Sahara" class="profile-pic" />
         <div class="mini-photos">
           <img src="sahara2.jpg" alt="Sahara photo 2" class="mini-pic" />
@@ -293,17 +344,48 @@
     const love = document.getElementById("love");
     const pickupText = document.getElementById("pickupText");
     const noteText = document.getElementById("noteText");
+    const heartsLayer = document.getElementById("hearts");
 
     let dodges = 0;
     const maxDodges = 6;
     let vanished = false;
 
+    /* ✅ Floating hearts generator */
+    const HEARTS = ["💗","💖","💕","💘","💝","💓","✨","🌸"];
+    const HEART_COUNT = 16;
+
+    function createFloatingHeart(){
+      const h = document.createElement("span");
+      h.textContent = HEARTS[Math.floor(Math.random() * HEARTS.length)];
+
+      const left = Math.random() * 100; // vw
+      const size = 14 + Math.random() * 18; // px
+      const dur = 6 + Math.random() * 7; // seconds
+      const drift = (Math.random() * 70 - 35).toFixed(1) + "px"; // -35..35 px
+
+      h.style.left = left + "vw";
+      h.style.fontSize = size + "px";
+      h.style.animationDuration = dur + "s";
+      h.style.setProperty("--drift", drift);
+
+      heartsLayer.appendChild(h);
+
+      // cleanup after animation
+      setTimeout(() => h.remove(), (dur * 1000) + 200);
+    }
+
+    // Seed some hearts immediately, then keep spawning
+    for (let i = 0; i < HEART_COUNT; i++){
+      setTimeout(createFloatingHeart, i * 220);
+    }
+    setInterval(createFloatingHeart, 450);
+
+    /* ✅ Poof for NO button */
     function makePoofAtNoButton(){
       const rect = noBtn.getBoundingClientRect();
 
       const poof = document.createElement("div");
       poof.className = "poof";
-
       poof.style.left = (rect.left + rect.width / 2 + window.scrollX) + "px";
       poof.style.top  = (rect.top + rect.height / 2 + window.scrollY) + "px";
 
@@ -354,13 +436,36 @@
     }
 
     noBtn.addEventListener("mouseenter", teleportInsideBox);
-
     noBtn.addEventListener("touchstart", (e) => {
       e.preventDefault();
       teleportInsideBox();
     }, { passive: false });
 
+    /* ✅ Confetti burst for YES */
+    function confettiBurst(){
+      const wrap = document.createElement("div");
+      wrap.className = "confetti";
+
+      const emojis = ["💖","💕","💘","✨","🌸","💗"];
+      const count = 44;
+
+      for(let i=0;i<count;i++){
+        const s = document.createElement("span");
+        s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+        s.style.left = Math.random()*100 + "vw";
+        s.style.animationDelay = (Math.random()*0.2) + "s";
+        s.style.fontSize = (16 + Math.random()*12) + "px";
+        s.style.transform = `translateY(0) rotate(${Math.random()*180}deg)`;
+        wrap.appendChild(s);
+      }
+
+      document.body.appendChild(wrap);
+      setTimeout(() => wrap.remove(), 1400);
+    }
+
     yesBtn.addEventListener("click", () => {
+      confettiBurst();
+
       question.style.display = "none";
       buttons.style.display = "none";
       pickupText.style.display = "none";
