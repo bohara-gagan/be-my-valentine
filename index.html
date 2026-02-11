@@ -112,7 +112,7 @@
       line-height: 1.12;
     }
 
-    /* Countdown */
+    /* Cuter countdown pill */
     .countdown{
       position: relative;
       display: inline-flex;
@@ -181,11 +181,12 @@
 
     .buttons{
       position: relative;
-      height: 170px;
+      height: 140px;
       margin-top: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
+      gap: 16px;
     }
 
     button{
@@ -199,12 +200,11 @@
     }
 
     #yesBtn{
-      position: relative;
-      z-index: 50;
       background: linear-gradient(135deg, #ff2f6d, #ff1744);
       color: white;
       box-shadow: 0 14px 28px rgba(255,47,109,0.55);
       transition: transform 0.15s ease, box-shadow 0.15s ease;
+      z-index: 2;
     }
     #yesBtn:hover{
       transform: scale(1.08);
@@ -214,19 +214,16 @@
     #noBtn{
       background: white;
       color: #ff2f6d;
-      position: absolute;
-      left: 70%;
-      top: 18px;
       box-shadow: 0 12px 22px rgba(0,0,0,0.25);
-      z-index: 10;
+      z-index: 3;
       will-change: left, top, transform, opacity;
       transform-origin: center;
     }
 
-    /* poof vanish */
+    /* Poof vanish */
     @keyframes poofVanish {
       0%   { transform: scale(1); opacity: 1; filter: blur(0); }
-      60%  { transform: scale(0.7); opacity: 0.8; filter: blur(0.2px); }
+      55%  { transform: scale(0.7); opacity: 0.75; filter: blur(0.2px); }
       100% { transform: scale(0); opacity: 0; filter: blur(1.2px); }
     }
     .fade-out{
@@ -239,7 +236,7 @@
       width: 10px;
       height: 10px;
       pointer-events: none;
-      z-index: 999;
+      z-index: 10;
     }
     .poof span{
       position: absolute;
@@ -253,18 +250,18 @@
       animation: poofParticle 520ms ease-out forwards;
       box-shadow: 0 10px 18px rgba(0,0,0,0.12);
     }
-    .poof span:nth-child(1){ --dx: -28px; --dy: -18px; }
-    .poof span:nth-child(2){ --dx:  12px; --dy: -30px; }
-    .poof span:nth-child(3){ --dx:  34px; --dy: -10px; }
-    .poof span:nth-child(4){ --dx: -20px; --dy:  18px; }
-    .poof span:nth-child(5){ --dx:  24px; --dy:  22px; }
-    .poof span:nth-child(6){ --dx:   0px; --dy:  32px; }
+    .poof span:nth-child(1){ --dx: -26px; --dy: -18px; }
+    .poof span:nth-child(2){ --dx:  10px; --dy: -28px; }
+    .poof span:nth-child(3){ --dx:  30px; --dy: -8px; }
+    .poof span:nth-child(4){ --dx: -18px; --dy:  16px; }
+    .poof span:nth-child(5){ --dx:  22px; --dy:  20px; }
+    .poof span:nth-child(6){ --dx:   0px; --dy:  30px; }
     @keyframes poofParticle{
       0%   { transform: translate(-50%, -50%) scale(1); opacity: 0.95; }
       100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.2); opacity: 0; }
     }
 
-    /* confetti */
+    /* Confetti */
     .confetti {
       position: fixed;
       inset: 0;
@@ -287,43 +284,16 @@
     .love{
       display: none;
       margin-top: 10px;
-      animation: fadeUp 1.1s ease forwards;
+      animation: fadeUp 1.2s ease forwards;
     }
     @keyframes fadeUp{
-      from{ opacity: 0; transform: translateY(18px); }
+      from{ opacity: 0; transform: translateY(20px); }
       to{ opacity: 1; transform: translateY(0); }
     }
 
     .love h2{
       font-size: 2.05rem;
       margin: 8px 0 10px;
-    }
-
-    /* YouTube embed */
-    .yt-title{
-      margin: 10px auto 8px;
-      font-size: 0.98rem;
-      opacity: 0.95;
-    }
-    .yt-wrap{
-      margin: 10px auto 10px;
-      max-width: 420px;
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 14px 28px rgba(0,0,0,0.18);
-      border: 1px solid rgba(255,255,255,0.25);
-      background: rgba(255,255,255,0.16);
-    }
-    .yt-iframe{
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      border: 0;
-      display: block;
-    }
-    .yt-note{
-      margin: 6px 0 12px;
-      font-size: 0.98rem;
-      opacity: 0.95;
     }
 
     .couple-pic{
@@ -379,6 +349,21 @@
       .mini-pic{ width: 105px; height: 105px; }
       h1{ font-size: 2.1rem; }
     }
+
+    @media (prefers-reduced-motion: reduce){
+      .hearts span, .confetti span, .card, .love { animation: none !important; }
+      #yesBtn { transition: none !important; }
+      .mem p{ transition: none !important; }
+      .countdown{ animation: none !important; }
+      .countdown::after{ animation: none !important; }
+      .cd-heart{ animation: none !important; }
+    }
+
+    /* ✅ Keep No button above everything & movable */
+    #noBtn{
+      position: fixed !important;
+      z-index: 9999 !important;
+    }
   </style>
 </head>
 
@@ -407,28 +392,17 @@
       </div>
 
       <h1 id="question">Will you be my Valentine? 💖</h1>
+
       <p class="pickup" id="pickupText">I made this unfair on purpose 😌</p>
       <p class="tiny-note" id="noteText"></p>
 
       <div class="buttons" id="buttons">
-        <button id="yesBtn" type="button">Yes 💕</button>
-        <button id="noBtn" type="button">No 😅</button>
+        <button id="yesBtn">Yes 💕</button>
+        <button id="noBtn">No 😅</button>
       </div>
 
       <div class="love" id="love">
         <h2>Sahara Chloe Kirkman 💗</h2>
-
-        <p class="yt-title">🎵 Our song: <b>You’re Beautiful — James Blunt</b></p>
-        <div class="yt-wrap">
-          <iframe
-            class="yt-iframe"
-            src="https://www.youtube-nocookie.com/embed/oofSnsGkops?rel=0&modestbranding=1"
-            title="You're Beautiful - James Blunt"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen
-          ></iframe>
-        </div>
-        <p class="yt-note">Tap play 😊</p>
 
         <img src="couple.jpg" alt="Us together" class="couple-pic" />
 
@@ -452,288 +426,271 @@
     </div>
   </div>
 
- <script>
   <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const noBtn = document.getElementById("noBtn");
-  const yesBtn = document.getElementById("yesBtn");
-  const question = document.getElementById("question");
-  const buttons = document.getElementById("buttons");
-  const love = document.getElementById("love");
-  const pickupText = document.getElementById("pickupText");
-  const noteText = document.getElementById("noteText");
-  const heartsLayer = document.getElementById("hearts");
+  document.addEventListener("DOMContentLoaded", () => {
+    const $ = (id) => document.getElementById(id);
 
-  const cdDays = document.getElementById("cdDays");
-  const cdHours = document.getElementById("cdHours");
-  const cdMins = document.getElementById("cdMins");
-  const cdSecs = document.getElementById("cdSecs");
+    const noBtn = $("noBtn");
+    const yesBtn = $("yesBtn");
+    const question = $("question");
+    const buttons = $("buttons");
+    const love = $("love");
+    const pickupText = $("pickupText");
+    const noteText = $("noteText");
+    const heartsLayer = $("hearts");
 
-  const memLine = document.getElementById("memLine");
+    const cdDays = $("cdDays");
+    const cdHours = $("cdHours");
+    const cdMins = $("cdMins");
+    const cdSecs = $("cdSecs");
 
-  /* ---------- Floating hearts ---------- */
-  const HEARTS = ["💗","💖","💕","💘","💝","💓","✨","🌸"];
-  function createFloatingHeart(){
-    const h = document.createElement("span");
-    h.textContent = HEARTS[Math.floor(Math.random() * HEARTS.length)];
-    const left = Math.random() * 100;
-    const size = 14 + Math.random() * 20;
-    const dur = 4 + Math.random() * 5;
-    const drift = (Math.random() * 260 - 130).toFixed(1) + "px";
-    h.style.left = left + "vw";
-    h.style.fontSize = size + "px";
-    h.style.animationDuration = dur + "s";
-    h.style.setProperty("--drift", drift);
-    heartsLayer.appendChild(h);
-    setTimeout(() => h.remove(), (dur * 1000) + 300);
-  }
-  for (let i = 0; i < 14; i++) setTimeout(createFloatingHeart, i * 120);
-  setInterval(createFloatingHeart, 260);
+    const memLine = $("memLine");
 
-  /* ---------- Confetti ---------- */
-  function confettiBurst(){
-    const wrap = document.createElement("div");
-    wrap.className = "confetti";
-    const emojis = ["💖","💕","💘","✨","🌸","💗"];
-    const count = 70;
-    for(let i=0;i<count;i++){
-      const s = document.createElement("span");
-      s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
-      s.style.left = Math.random()*100 + "vw";
-      s.style.animationDelay = (Math.random()*0.18) + "s";
-      s.style.fontSize = (16 + Math.random()*14) + "px";
-      wrap.appendChild(s);
-    }
-    document.body.appendChild(wrap);
-    setTimeout(() => wrap.remove(), 1400);
-  }
+    if (!noBtn || !yesBtn) return;
 
-  /* ---------- Poof ---------- */
-  function makePoofAt(el){
-    const rect = el.getBoundingClientRect();
-    const poof = document.createElement("div");
-    poof.className = "poof";
-    poof.style.left = (rect.left + rect.width / 2 + window.scrollX) + "px";
-    poof.style.top  = (rect.top + rect.height / 2 + window.scrollY) + "px";
-    for (let i = 0; i < 6; i++) poof.appendChild(document.createElement("span"));
-    document.body.appendChild(poof);
-    setTimeout(() => poof.remove(), 650);
-  }
-
-  /* ---------- NO button: ALWAYS show first ---------- */
-  let dodges = 0;
-  const maxDodges = 6;
-  let vanished = false;
-
-  // Ensure it is visible + clickable
-  noBtn.classList.remove("fade-out");
-  noBtn.style.display = "inline-block";
-  noBtn.style.pointerEvents = "auto";
-  noBtn.style.zIndex = "9999";
-
-  // Put it somewhere visible immediately
-  function placeNoInitial(){
-    const vw = window.innerWidth, vh = window.innerHeight;
-    const rect = noBtn.getBoundingClientRect();
-    const x = Math.max(12, vw - rect.width - 24);
-    const y = Math.max(12, Math.min(vh - rect.height - 24, Math.round(vh * 0.62)));
-    noBtn.style.left = x + "px";
-    noBtn.style.top  = y + "px";
-  }
-  placeNoInitial();
-  setTimeout(placeNoInitial, 80);
-
-  function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
-
-  function dodgeEverywhere(){
-    if (vanished || dodges >= maxDodges) return;
-
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-
-    const noRect = noBtn.getBoundingClientRect();
-    const yesRect = yesBtn.getBoundingClientRect();
-
-    const pad = 14;
-    const maxX = vw - noRect.width - pad;
-    const maxY = vh - noRect.height - pad;
-
-    const yesCX = yesRect.left + yesRect.width/2;
-    const yesCY = yesRect.top + yesRect.height/2;
-
-    const avoidRadius = 220;
-
-    // choose far + big jump
-    let best = { x: pad, y: pad, score: -1 };
-    const curCX = noRect.left + noRect.width/2;
-    const curCY = noRect.top + noRect.height/2;
-
-    for (let i = 0; i < 65; i++){
-      const x = pad + Math.random() * Math.max(1, maxX - pad);
-      const y = pad + Math.random() * Math.max(1, maxY - pad);
-
-      const cx = x + noRect.width/2;
-      const cy = y + noRect.height/2;
-
-      const dxYes = cx - yesCX;
-      const dyYes = cy - yesCY;
-      const distYes = Math.sqrt(dxYes*dxYes + dyYes*dyYes);
-      if (distYes < avoidRadius) continue;
-
-      const dxJump = cx - curCX;
-      const dyJump = cy - curCY;
-      const jump = Math.sqrt(dxJump*dxJump + dyJump*dyJump);
-
-      const score = distYes + jump * 0.85;
-      if (score > best.score) best = { x, y, score };
+    /* Floating hearts */
+    if (heartsLayer){
+      const HEARTS = ["💗","💖","💕","💘","💝","💓","✨","🌸"];
+      function createFloatingHeart(){
+        const h = document.createElement("span");
+        h.textContent = HEARTS[Math.floor(Math.random() * HEARTS.length)];
+        const left = Math.random() * 100;
+        const size = 14 + Math.random() * 20;
+        const dur = 4 + Math.random() * 5;
+        const drift = (Math.random() * 260 - 130).toFixed(1) + "px";
+        h.style.left = left + "vw";
+        h.style.fontSize = size + "px";
+        h.style.animationDuration = dur + "s";
+        h.style.setProperty("--drift", drift);
+        heartsLayer.appendChild(h);
+        setTimeout(() => h.remove(), (dur * 1000) + 300);
+      }
+      for (let i = 0; i < 12; i++) setTimeout(createFloatingHeart, i * 140);
+      setInterval(createFloatingHeart, 300);
     }
 
-    noBtn.style.transition = "left 10ms linear, top 10ms linear, transform 90ms ease";
-    noBtn.style.left = clamp(best.x, pad, maxX) + "px";
-    noBtn.style.top  = clamp(best.y, pad, maxY) + "px";
-
-    noBtn.style.transform = "scale(0.92)";
-    setTimeout(() => { noBtn.style.transform = "scale(1)"; }, 85);
-
-    dodges++;
-
-    if (dodges === 2) noteText.textContent = "No? really? 😭";
-    if (dodges === 4) noteText.textContent = "Stop chasing me 😭";
-    if (dodges === 5) noteText.textContent = "Last chance 😌";
-
-    if (dodges >= maxDodges){
-      vanished = true;
-      noteText.textContent = "Okay okay… you win 😌";
-      makePoofAt(noBtn);
-      noBtn.classList.add("fade-out");
-      setTimeout(() => { noBtn.style.display = "none"; }, 450);
+    /* Confetti */
+    function confettiBurst(){
+      const wrap = document.createElement("div");
+      wrap.className = "confetti";
+      const emojis = ["💖","💕","💘","✨","🌸","💗"];
+      const count = 60;
+      for(let i=0;i<count;i++){
+        const s = document.createElement("span");
+        s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+        s.style.left = Math.random()*100 + "vw";
+        s.style.animationDelay = (Math.random()*0.18) + "s";
+        s.style.fontSize = (16 + Math.random()*14) + "px";
+        wrap.appendChild(s);
+      }
+      document.body.appendChild(wrap);
+      setTimeout(() => wrap.remove(), 1400);
     }
-  }
 
-  // SUPER aggressive triggers
-  ["mouseenter","mousemove","pointerenter","pointermove"].forEach(evt => {
-    noBtn.addEventListener(evt, dodgeEverywhere);
-  });
+    /* Poof */
+    function makePoofAt(el){
+      const rect = el.getBoundingClientRect();
+      const poof = document.createElement("div");
+      poof.className = "poof";
+      poof.style.left = (rect.left + rect.width / 2 + window.scrollX) + "px";
+      poof.style.top  = (rect.top + rect.height / 2 + window.scrollY) + "px";
+      for (let i = 0; i < 6; i++) poof.appendChild(document.createElement("span"));
+      document.body.appendChild(poof);
+      setTimeout(() => poof.remove(), 650);
+    }
 
-  // Mobile
-  noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); dodgeEverywhere(); }, { passive: false });
-  noBtn.addEventListener("touchmove", (e) => { e.preventDefault(); dodgeEverywhere(); }, { passive: false });
+    /* NO button dodge (fast + far, 6 times) */
+    let dodges = 0;
+    const maxDodges = 6;
+    let vanished = false;
 
-  // If user resizes / rotates phone
-  window.addEventListener("resize", () => {
-    if (!vanished) placeNoInitial();
-  });
+    noBtn.style.display = "inline-block";
+    noBtn.style.opacity = "1";
+    noBtn.style.pointerEvents = "auto";
 
-  // Move away quickly so it never blocks YES
-  setTimeout(dodgeEverywhere, 120);
-  setTimeout(dodgeEverywhere, 240);
+    function placeNoInitial(){
+      const vw = window.innerWidth, vh = window.innerHeight;
+      const r = noBtn.getBoundingClientRect();
+      noBtn.style.left = Math.max(16, (vw/2 + 90)) + "px";
+      noBtn.style.top  = Math.min(vh - r.height - 20, Math.max(16, vh * 0.70)) + "px";
+    }
+    placeNoInitial();
 
-  /* ---------- Memory carousel ---------- */
-  const memories = [
-    "I love your laugh.",
-    "I love how you care.",
-    "I love our little moments.",
-    "I love the way you look at me.",
-    "I love you. That’s it."
-  ];
+    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
 
-  function startMemoryCarousel(){
-    let i = 0;
-    memLine.textContent = "";
-    memLine.classList.remove("show");
+    function dodge(){
+      if (vanished || dodges >= maxDodges) return;
 
-    const showNext = () => {
-      if (i >= memories.length) return;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
 
+      const noR = noBtn.getBoundingClientRect();
+      const yesR = yesBtn.getBoundingClientRect();
+
+      const pad = 14;
+      const maxX = vw - noR.width - pad;
+      const maxY = vh - noR.height - pad;
+
+      const yesCX = yesR.left + yesR.width/2;
+      const yesCY = yesR.top + yesR.height/2;
+
+      const avoidRadius = 230;
+
+      let best = { x: pad, y: pad, score: -1 };
+      const curCX = noR.left + noR.width/2;
+      const curCY = noR.top + noR.height/2;
+
+      for (let i = 0; i < 70; i++){
+        const x = pad + Math.random() * Math.max(1, maxX - pad);
+        const y = pad + Math.random() * Math.max(1, maxY - pad);
+
+        const cx = x + noR.width/2;
+        const cy = y + noR.height/2;
+
+        const distYes = Math.hypot(cx - yesCX, cy - yesCY);
+        if (distYes < avoidRadius) continue;
+
+        const jump = Math.hypot(cx - curCX, cy - curCY);
+        const score = distYes + jump * 1.05;
+        if (score > best.score) best = { x, y, score };
+      }
+
+      noBtn.style.transition = "left 8ms linear, top 8ms linear, transform 120ms ease";
+      noBtn.style.left = clamp(best.x, pad, maxX) + "px";
+      noBtn.style.top  = clamp(best.y, pad, maxY) + "px";
+
+      noBtn.style.transform = "scale(0.9)";
+      setTimeout(() => { noBtn.style.transform = "scale(1)"; }, 90);
+
+      dodges++;
+
+      if (noteText){
+        if (dodges === 2) noteText.textContent = "No? really? 😭";
+        if (dodges === 4) noteText.textContent = "Stop chasing me 😭";
+        if (dodges === 5) noteText.textContent = "Last chance 😌";
+      }
+
+      if (dodges >= maxDodges){
+        vanished = true;
+        if (noteText) noteText.textContent = "Okay okay… you win 😌";
+        makePoofAt(noBtn);
+        noBtn.classList.add("fade-out");
+        setTimeout(() => { noBtn.style.display = "none"; }, 450);
+      }
+    }
+
+    // Dodge when cursor gets near
+    function onMouseMove(e){
+      if (vanished) return;
+      const r = noBtn.getBoundingClientRect();
+      const cx = r.left + r.width/2;
+      const cy = r.top + r.height/2;
+      const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
+      if (dist < 120) dodge();
+    }
+    document.addEventListener("mousemove", onMouseMove);
+
+    // Also dodge on tap/click attempt
+    noBtn.addEventListener("pointerdown", (e) => { e.preventDefault(); dodge(); });
+    noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); dodge(); }, { passive:false });
+
+    window.addEventListener("resize", () => {
+      if (!vanished) placeNoInitial();
+    });
+
+    /* Memory carousel */
+    const memories = [
+      "I love your laugh.",
+      "I love how you care.",
+      "I love our little moments.",
+      "I love the way you look at me.",
+      "I love you. That’s it."
+    ];
+
+    function startMemoryCarousel(){
+      if (!memLine) return;
+      let i = 0;
+      memLine.textContent = "";
       memLine.classList.remove("show");
-      setTimeout(() => {
-        memLine.textContent = "💗 " + memories[i];
-        memLine.classList.add("show");
-        i++;
-      }, 120);
 
-      setTimeout(showNext, 1200);
-    };
-
-    showNext();
-  }
-
-  /* ---------- YES click ---------- */
-  yesBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    confettiBurst();
-
-    question.style.display = "none";
-    buttons.style.display = "none";
-    pickupText.style.display = "none";
-    noteText.style.display = "none";
-
-    love.style.display = "block";
-    startMemoryCarousel();
-    love.scrollIntoView({ behavior: "smooth", block: "start" });
-  });
-
-  /* ---------- Countdown (Sydney time) ---------- */
-  function getSydneyNow(){
-    const parts = new Intl.DateTimeFormat("en-AU", {
-      timeZone: "Australia/Sydney",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false
-    }).formatToParts(new Date());
-
-    const get = (type) => parts.find(p => p.type === type)?.value;
-    return new Date(
-      Number(get("year")),
-      Number(get("month")) - 1,
-      Number(get("day")),
-      Number(get("hour")),
-      Number(get("minute")),
-      Number(get("second"))
-    );
-  }
-
-  function updateCountdown(){
-    const nowSydney = getSydneyNow();
-    const year = nowSydney.getFullYear();
-
-    let target = new Date(year, 1, 14, 0, 0, 0);
-    if (nowSydney.getTime() >= target.getTime()){
-      target = new Date(year + 1, 1, 14, 0, 0, 0);
+      const showNext = () => {
+        if (i >= memories.length) return;
+        memLine.classList.remove("show");
+        setTimeout(() => {
+          memLine.textContent = "💗 " + memories[i];
+          memLine.classList.add("show");
+          i++;
+        }, 120);
+        setTimeout(showNext, 1200);
+      };
+      showNext();
     }
 
-    let diff = target.getTime() - nowSydney.getTime();
-    if (diff < 0) diff = 0;
+    /* YES click */
+    yesBtn.addEventListener("click", (e) => {
+      e.preventDefault();
 
-    const totalSeconds = Math.floor(diff / 1000);
-    const days = Math.floor(totalSeconds / (3600 * 24));
-    const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
-    const mins = Math.floor((totalSeconds % 3600) / 60);
-    const secs = totalSeconds % 60;
+      confettiBurst();
 
-    cdDays.textContent = String(days);
-    cdHours.textContent = String(hours).padStart(2, "0");
-    cdMins.textContent = String(mins).padStart(2, "0");
-    cdSecs.textContent = String(secs).padStart(2, "0");
-  }
+      if (question) question.style.display = "none";
+      if (buttons) buttons.style.display = "none";
+      if (pickupText) pickupText.style.display = "none";
+      if (noteText) noteText.style.display = "none";
 
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
-});
-   /* ✅ FORCE no button to be visible + roam anywhere */
-#noBtn{
-  position: fixed !important;
-  display: inline-block !important;
-  opacity: 1 !important;
-}
+      if (love) love.style.display = "block";
+      startMemoryCarousel();
 
-</script>
+      if (love) love.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
 
+    /* Countdown (Sydney) */
+    function getSydneyNow(){
+      const parts = new Intl.DateTimeFormat("en-AU", {
+        timeZone: "Australia/Sydney",
+        year: "numeric", month: "2-digit", day: "2-digit",
+        hour: "2-digit", minute: "2-digit", second: "2-digit",
+        hour12: false
+      }).formatToParts(new Date());
+      const get = (t) => parts.find(p => p.type === t)?.value;
+      return new Date(
+        Number(get("year")),
+        Number(get("month")) - 1,
+        Number(get("day")),
+        Number(get("hour")),
+        Number(get("minute")),
+        Number(get("second"))
+      );
+    }
+
+    function updateCountdown(){
+      if (!cdDays || !cdHours || !cdMins || !cdSecs) return;
+
+      const now = getSydneyNow();
+      const year = now.getFullYear();
+
+      let target = new Date(year, 1, 14, 0, 0, 0);
+      if (now.getTime() >= target.getTime()){
+        target = new Date(year + 1, 1, 14, 0, 0, 0);
+      }
+
+      let diff = target.getTime() - now.getTime();
+      if (diff < 0) diff = 0;
+
+      const totalSeconds = Math.floor(diff / 1000);
+      const days = Math.floor(totalSeconds / (3600 * 24));
+      const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+      const mins = Math.floor((totalSeconds % 3600) / 60);
+      const secs = totalSeconds % 60;
+
+      cdDays.textContent = String(days);
+      cdHours.textContent = String(hours).padStart(2, "0");
+      cdMins.textContent = String(mins).padStart(2, "0");
+      cdSecs.textContent = String(secs).padStart(2, "0");
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  });
+  </script>
 </body>
 </html>
