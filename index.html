@@ -28,6 +28,7 @@
       background: linear-gradient(135deg, #ff6f91, #ff9a9e);
     }
 
+    /* Floating hearts */
     .hearts{
       position: fixed;
       inset: 0;
@@ -111,7 +112,7 @@
       line-height: 1.12;
     }
 
-    /* CUTER COUNTDOWN */
+    /* Cute countdown */
     .countdown{
       position: relative;
       display: inline-flex;
@@ -203,6 +204,11 @@
       box-shadow: 0 14px 28px rgba(255,47,109,0.55);
       transition: transform 0.15s ease, box-shadow 0.15s ease;
       z-index: 2;
+      position: relative;
+    }
+    #yesBtn:hover{
+      transform: scale(1.08);
+      box-shadow: 0 20px 40px rgba(255,47,109,0.7);
     }
 
     #noBtn{
@@ -337,17 +343,31 @@
     }
     .mem p.show{ opacity: 1; transform: translateY(0); }
 
-    .signature{ margin-top: 18px; font-style: italic; opacity: 0.95; }
-
-    @media (max-width: 380px){
-      .profile-pic{ width: 200px; height: 200px; }
-      .mini-pic{ width: 105px; height: 105px; }
-      h1{ font-size: 2.1rem; }
+    /* Fallback play button if browser blocks audio */
+    .music-fallback{
+      margin: 14px auto 0;
+      display: none;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
     }
+    .music-fallback button{
+      padding: 10px 16px;
+      font-size: 0.98rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: rgba(255,255,255,0.85);
+      color: #ff2f6d;
+      box-shadow: 0 12px 22px rgba(0,0,0,0.18);
+    }
+
+    .signature{ margin-top: 18px; font-style: italic; opacity: 0.95; }
   </style>
 </head>
 
 <body>
+  <!-- song.mp3 must be in same folder as index.html -->
   <audio id="bgMusic" preload="auto" loop>
     <source src="song.mp3" type="audio/mpeg" />
   </audio>
@@ -356,7 +376,6 @@
 
   <div class="page">
     <div class="card">
-
       <div class="photo-wrap">
         <img src="sahara.jpg" alt="Sahara" class="profile-pic" />
         <div class="mini-photos">
@@ -387,7 +406,6 @@
 
       <div class="love" id="love">
         <h2>Sahara Chloe Kirkman 💗</h2>
-
         <img src="couple.jpg" alt="Us together" class="couple-pic" />
 
         <p>
@@ -400,260 +418,288 @@
           <p id="memLine"></p>
         </div>
 
+        <div class="music-fallback" id="musicFallback">
+          <span>🎵</span>
+          <button id="playMusicBtn" type="button">Tap to play music</button>
+        </div>
+
         <p class="signature">
           Always yours,<br>
           <strong>Gagan</strong><br>
           ❤️
         </p>
       </div>
-
     </div>
   </div>
 
   <script>
-    const noBtn = document.getElementById("noBtn");
-    const yesBtn = document.getElementById("yesBtn");
-    const question = document.getElementById("question");
-    const buttons = document.getElementById("buttons");
-    const love = document.getElementById("love");
-    const pickupText = document.getElementById("pickupText");
-    const noteText = document.getElementById("noteText");
-    const heartsLayer = document.getElementById("hearts");
+    // Run after DOM is ready (prevents “buttons not working” issues)
+    document.addEventListener("DOMContentLoaded", () => {
+      const noBtn = document.getElementById("noBtn");
+      const yesBtn = document.getElementById("yesBtn");
+      const question = document.getElementById("question");
+      const buttons = document.getElementById("buttons");
+      const love = document.getElementById("love");
+      const pickupText = document.getElementById("pickupText");
+      const noteText = document.getElementById("noteText");
+      const heartsLayer = document.getElementById("hearts");
+      const bgMusic = document.getElementById("bgMusic");
 
-    const bgMusic = document.getElementById("bgMusic");
+      const cdDays = document.getElementById("cdDays");
+      const cdHours = document.getElementById("cdHours");
+      const cdMins = document.getElementById("cdMins");
+      const cdSecs = document.getElementById("cdSecs");
 
-    const cdDays = document.getElementById("cdDays");
-    const cdHours = document.getElementById("cdHours");
-    const cdMins = document.getElementById("cdMins");
-    const cdSecs = document.getElementById("cdSecs");
+      const memLine = document.getElementById("memLine");
+      const musicFallback = document.getElementById("musicFallback");
+      const playMusicBtn = document.getElementById("playMusicBtn");
 
-    const memLine = document.getElementById("memLine");
+      // -------- Hearts --------
+      const HEARTS = ["💗","💖","💕","💘","💝","💓","✨","🌸"];
+      function createFloatingHeart(){
+        const h = document.createElement("span");
+        h.textContent = HEARTS[Math.floor(Math.random() * HEARTS.length)];
+        const left = Math.random() * 100;
+        const size = 14 + Math.random() * 18;
+        const dur = 5 + Math.random() * 6;
+        const drift = (Math.random() * 90 - 45).toFixed(1) + "px";
 
-    let dodges = 0;
-    const maxDodges = 7;
-    let vanished = false;
+        h.style.left = left + "vw";
+        h.style.fontSize = size + "px";
+        h.style.animationDuration = dur + "s";
+        h.style.setProperty("--drift", drift);
 
-    const startScale = 1.0;
-    const endScale = 0.55;
-    function setNoScale(scale){ noBtn.style.setProperty("--noScale", scale); }
-    setNoScale(startScale);
+        heartsLayer.appendChild(h);
+        setTimeout(() => h.remove(), (dur * 1000) + 200);
+      }
+      for (let i = 0; i < 16; i++) setTimeout(createFloatingHeart, i * 200);
+      setInterval(createFloatingHeart, 420);
 
-    const HEARTS = ["💗","💖","💕","💘","💝","💓","✨","🌸"];
-    function createFloatingHeart(){
-      const h = document.createElement("span");
-      h.textContent = HEARTS[Math.floor(Math.random() * HEARTS.length)];
-      const left = Math.random() * 100;
-      const size = 14 + Math.random() * 18;
-      const dur = 5 + Math.random() * 6;
-      const drift = (Math.random() * 90 - 45).toFixed(1) + "px";
-      h.style.left = left + "vw";
-      h.style.fontSize = size + "px";
-      h.style.animationDuration = dur + "s";
-      h.style.setProperty("--drift", drift);
-      heartsLayer.appendChild(h);
-      setTimeout(() => h.remove(), (dur * 1000) + 200);
-    }
-    for (let i = 0; i < 16; i++) setTimeout(createFloatingHeart, i * 200);
-    setInterval(createFloatingHeart, 420);
+      // -------- No button dodge (fixed: no auto-spam) --------
+      let dodges = 0;
+      const maxDodges = 7;
+      let vanished = false;
+      let dodgeLocked = false; // ✅ cooldown lock
 
-    function makePoofAtNoButton(){
-      const rect = noBtn.getBoundingClientRect();
-      const poof = document.createElement("div");
-      poof.className = "poof";
-      poof.style.left = (rect.left + rect.width / 2 + window.scrollX) + "px";
-      poof.style.top  = (rect.top + rect.height / 2 + window.scrollY) + "px";
-      for (let i = 0; i < 6; i++) poof.appendChild(document.createElement("span"));
-      document.body.appendChild(poof);
-      setTimeout(() => poof.remove(), 650);
-    }
+      const startScale = 1.0;
+      const endScale = 0.55;
+      function setNoScale(scale){ noBtn.style.setProperty("--noScale", scale); }
+      setNoScale(startScale);
 
-    function vanishNoButton(){
-      if (vanished) return;
-      vanished = true;
-      noteText.textContent = "Okay okay… you win 😌";
-      makePoofAtNoButton();
-      noBtn.classList.add("fade-out");
-      setTimeout(() => { noBtn.style.display = "none"; }, 450);
-    }
-
-    function panic(){
-      noBtn.classList.remove("panic");
-      void noBtn.offsetWidth;
-      noBtn.classList.add("panic");
-    }
-
-    function teleportInsideBox(){
-      if (dodges >= maxDodges || vanished) return;
-
-      const bw = buttons.clientWidth;
-      const bh = buttons.clientHeight;
-
-      const btnRect = buttons.getBoundingClientRect();
-      const yesRect = yesBtn.getBoundingClientRect();
-      const noRect = noBtn.getBoundingClientRect();
-
-      const maxX = bw - noRect.width;
-      const maxY = bh - noRect.height;
-
-      const avoidRadius = 110;
-      const yesCenterX = (yesRect.left + yesRect.width/2) - btnRect.left;
-      const yesCenterY = (yesRect.top + yesRect.height/2) - btnRect.top;
-
-      let x = 0, y = 0;
-      let tries = 0;
-
-      while (tries < 18){
-        x = Math.random() * Math.max(0, maxX);
-        y = Math.random() * Math.max(0, maxY);
-
-        const dx = (x + noRect.width/2) - yesCenterX;
-        const dy = (y + noRect.height/2) - yesCenterY;
-        const dist = Math.sqrt(dx*dx + dy*dy);
-
-        if (dist > avoidRadius) break;
-        tries++;
+      function makePoofAtNoButton(){
+        const rect = noBtn.getBoundingClientRect();
+        const poof = document.createElement("div");
+        poof.className = "poof";
+        poof.style.left = (rect.left + rect.width / 2 + window.scrollX) + "px";
+        poof.style.top  = (rect.top + rect.height / 2 + window.scrollY) + "px";
+        for (let i = 0; i < 6; i++) poof.appendChild(document.createElement("span"));
+        document.body.appendChild(poof);
+        setTimeout(() => poof.remove(), 650);
       }
 
-      noBtn.style.transition = "left 55ms linear, top 55ms linear";
-      noBtn.style.left = x + "px";
-      noBtn.style.top  = y + "px";
+      function vanishNoButton(){
+        if (vanished) return;
+        vanished = true;
+        noteText.textContent = "Okay okay… you win 😌";
+        makePoofAtNoButton();
+        noBtn.classList.add("fade-out");
+        setTimeout(() => { noBtn.style.display = "none"; }, 450);
+      }
 
-      dodges++;
+      function panic(){
+        noBtn.classList.remove("panic");
+        void noBtn.offsetWidth;
+        noBtn.classList.add("panic");
+      }
 
-      const t = dodges / maxDodges;
-      const newScale = startScale + (endScale - startScale) * t;
-      setNoScale(newScale);
+      function teleportInsideBox(){
+        if (vanished || dodges >= maxDodges) return;
+        if (dodgeLocked) return;          // ✅ prevents rapid-fire dodges
+        dodgeLocked = true;
+        setTimeout(() => (dodgeLocked = false), 220);
 
-      if (dodges >= 3) panic();
+        const bw = buttons.clientWidth;
+        const bh = buttons.clientHeight;
 
-      if (dodges === 2) noteText.textContent = "No? really? 😭";
-      if (dodges === 4) noteText.textContent = "It’s literally panicking now 😌";
-      if (dodges === 6) noteText.textContent = "Last last chance 😤";
+        const btnRect = buttons.getBoundingClientRect();
+        const yesRect = yesBtn.getBoundingClientRect();
+        const noRect = noBtn.getBoundingClientRect();
 
-      if (dodges >= maxDodges) vanishNoButton();
-    }
+        const maxX = Math.max(0, bw - noRect.width);
+        const maxY = Math.max(0, bh - noRect.height);
 
-    // safer: no mousemove spam
-    noBtn.addEventListener("mouseenter", teleportInsideBox);
-    noBtn.addEventListener("touchstart", (e) => {
-      e.preventDefault();
-      teleportInsideBox();
-    }, { passive: false });
+        const avoidRadius = 110;
+        const yesCenterX = (yesRect.left + yesRect.width/2) - btnRect.left;
+        const yesCenterY = (yesRect.top + yesRect.height/2) - btnRect.top;
 
-    const memories = [
-      "I love your laugh.",
-      "I love how you care.",
-      "I love the way you look at me.",
-      "I love how you roll your eyes at me.",
-      "I love how you beat me up."
-    ];
+        let x = 0, y = 0;
+        let tries = 0;
 
-    function startMemoryCarousel(){
-      let i = 0;
-      memLine.textContent = "";
-      memLine.classList.remove("show");
+        while (tries < 20){
+          x = Math.random() * maxX;
+          y = Math.random() * maxY;
 
-      const showNext = () => {
-        if (i >= memories.length) return;
+          const dx = (x + noRect.width/2) - yesCenterX;
+          const dy = (y + noRect.height/2) - yesCenterY;
+          const dist = Math.sqrt(dx*dx + dy*dy);
 
+          if (dist > avoidRadius) break;
+          tries++;
+        }
+
+        noBtn.style.transition = "left 70ms linear, top 70ms linear";
+        noBtn.style.left = x + "px";
+        noBtn.style.top  = y + "px";
+
+        dodges++;
+
+        const t = dodges / maxDodges;
+        const newScale = startScale + (endScale - startScale) * t;
+        setNoScale(newScale);
+
+        if (dodges >= 3) panic();
+
+        if (dodges === 2) noteText.textContent = "No? really? 😭";
+        if (dodges === 4) noteText.textContent = "It’s literally panicking now 😌";
+        if (dodges === 6) noteText.textContent = "Last last chance 😤";
+
+        if (dodges >= maxDodges) vanishNoButton();
+      }
+
+      // ✅ ONLY these events (no mousemove)
+      noBtn.addEventListener("mouseenter", teleportInsideBox);
+      noBtn.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        teleportInsideBox();
+      }, { passive: false });
+
+      // -------- Confetti --------
+      function confettiBurst(){
+        const wrap = document.createElement("div");
+        wrap.className = "confetti";
+        const emojis = ["💖","💕","💘","✨","🌸","💗"];
+        const count = 52;
+
+        for(let i=0;i<count;i++){
+          const s = document.createElement("span");
+          s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+          s.style.left = Math.random()*100 + "vw";
+          s.style.animationDelay = (Math.random()*0.25) + "s";
+          s.style.fontSize = (16 + Math.random()*12) + "px";
+          wrap.appendChild(s);
+        }
+        document.body.appendChild(wrap);
+        setTimeout(() => wrap.remove(), 1400);
+      }
+
+      // -------- Memory carousel --------
+      const memories = [
+        "I love your laugh.",
+        "I love how you care.",
+        "I love the way you look at me.",
+        "I love how you roll your eyes at me.",
+        "I love our little moments."
+      ];
+
+      function startMemoryCarousel(){
+        let i = 0;
+        memLine.textContent = "";
         memLine.classList.remove("show");
-        setTimeout(() => {
-          memLine.textContent = "💗 " + memories[i];
-          memLine.classList.add("show");
-          i++;
-        }, 120);
 
-        setTimeout(showNext, 1200);
-      };
+        const showNext = () => {
+          if (i >= memories.length) return;
+          memLine.classList.remove("show");
+          setTimeout(() => {
+            memLine.textContent = "💗 " + memories[i];
+            memLine.classList.add("show");
+            i++;
+          }, 120);
+          setTimeout(showNext, 1200);
+        };
 
-      showNext();
-    }
-
-    function confettiBurst(){
-      const wrap = document.createElement("div");
-      wrap.className = "confetti";
-      const emojis = ["💖","💕","💘","✨","🌸","💗"];
-      const count = 52;
-
-      for(let i=0;i<count;i++){
-        const s = document.createElement("span");
-        s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
-        s.style.left = Math.random()*100 + "vw";
-        s.style.animationDelay = (Math.random()*0.25) + "s";
-        s.style.fontSize = (16 + Math.random()*12) + "px";
-        wrap.appendChild(s);
+        showNext();
       }
-      document.body.appendChild(wrap);
-      setTimeout(() => wrap.remove(), 1400);
-    }
 
-    yesBtn.addEventListener("click", async () => {
-      // MP3 play on user click (works on phones)
-      try{
-        bgMusic.volume = 0.85;
-        await bgMusic.play();
-      }catch(e){}
+      // -------- YES click (music + show love) --------
+      async function tryPlayMusic(){
+        try{
+          bgMusic.volume = 0.85;
+          await bgMusic.play();
+          musicFallback.style.display = "none";
+          return true;
+        }catch(e){
+          musicFallback.style.display = "flex"; // show fallback button
+          return false;
+        }
+      }
 
-      confettiBurst();
+      yesBtn.addEventListener("click", async () => {
+        await tryPlayMusic();
+        confettiBurst();
 
-      question.style.display = "none";
-      buttons.style.display = "none";
-      pickupText.style.display = "none";
-      noteText.style.display = "none";
-      love.style.display = "block";
+        question.style.display = "none";
+        buttons.style.display = "none";
+        pickupText.style.display = "none";
+        noteText.style.display = "none";
+        love.style.display = "block";
 
-      startMemoryCarousel();
-      love.scrollIntoView({ behavior: "smooth", block: "start" });
+        startMemoryCarousel();
+        love.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      playMusicBtn.addEventListener("click", tryPlayMusic);
+
+      // -------- Countdown (Sydney time) --------
+      function getSydneyNow(){
+        const parts = new Intl.DateTimeFormat("en-AU", {
+          timeZone: "Australia/Sydney",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false
+        }).formatToParts(new Date());
+
+        const get = (type) => parts.find(p => p.type === type)?.value;
+        return new Date(
+          Number(get("year")),
+          Number(get("month")) - 1,
+          Number(get("day")),
+          Number(get("hour")),
+          Number(get("minute")),
+          Number(get("second"))
+        );
+      }
+
+      function updateCountdown(){
+        const nowSydney = getSydneyNow();
+        const year = nowSydney.getFullYear();
+
+        let target = new Date(year, 1, 14, 0, 0, 0);
+        if (nowSydney.getTime() >= target.getTime()){
+          target = new Date(year + 1, 1, 14, 0, 0, 0);
+        }
+
+        let diff = target.getTime() - nowSydney.getTime();
+        if (diff < 0) diff = 0;
+
+        const totalSeconds = Math.floor(diff / 1000);
+        const days = Math.floor(totalSeconds / (3600 * 24));
+        const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+        const mins = Math.floor((totalSeconds % 3600) / 60);
+        const secs = totalSeconds % 60;
+
+        cdDays.textContent = String(days);
+        cdHours.textContent = String(hours).padStart(2, "0");
+        cdMins.textContent = String(mins).padStart(2, "0");
+        cdSecs.textContent = String(secs).padStart(2, "0");
+      }
+
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
     });
-
-    function getSydneyNow(){
-      const parts = new Intl.DateTimeFormat("en-AU", {
-        timeZone: "Australia/Sydney",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: false
-      }).formatToParts(new Date());
-
-      const get = (type) => parts.find(p => p.type === type)?.value;
-      const y = Number(get("year"));
-      const m = Number(get("month"));
-      const d = Number(get("day"));
-      const hh = Number(get("hour"));
-      const mm = Number(get("minute"));
-      const ss = Number(get("second"));
-      return new Date(y, m - 1, d, hh, mm, ss);
-    }
-
-    function updateCountdown(){
-      const nowSydney = getSydneyNow();
-      const year = nowSydney.getFullYear();
-
-      let target = new Date(year, 1, 14, 0, 0, 0);
-      if (nowSydney.getTime() >= target.getTime()){
-        target = new Date(year + 1, 1, 14, 0, 0, 0);
-      }
-
-      let diff = target.getTime() - nowSydney.getTime();
-      if (diff < 0) diff = 0;
-
-      const totalSeconds = Math.floor(diff / 1000);
-      const days = Math.floor(totalSeconds / (3600 * 24));
-      const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
-      const mins = Math.floor((totalSeconds % 3600) / 60);
-      const secs = totalSeconds % 60;
-
-      cdDays.textContent = String(days);
-      cdHours.textContent = String(hours).padStart(2, "0");
-      cdMins.textContent = String(mins).padStart(2, "0");
-      cdSecs.textContent = String(secs).padStart(2, "0");
-    }
-
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
   </script>
 </body>
 </html>
