@@ -112,24 +112,58 @@
       line-height: 1.12;
     }
 
-    /* ✅ Countdown pill */
+    /* ✅ CUTER COUNTDOWN */
     .countdown{
+      position: relative;
       display: inline-flex;
       gap: 10px;
       align-items: center;
       justify-content: center;
-      padding: 10px 14px;
+      padding: 11px 16px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.18);
-      border: 1px solid rgba(255,255,255,0.25);
-      box-shadow: 0 14px 28px rgba(0,0,0,0.12);
+      background: rgba(255,255,255,0.20);
+      border: 1px solid rgba(255,255,255,0.28);
+      box-shadow: 0 16px 34px rgba(0,0,0,0.14);
       margin: 0 auto 14px;
       font-size: 0.98rem;
       line-height: 1.2;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(12px);
+      overflow: hidden;
+      animation: cdPulse 2.4s ease-in-out infinite;
     }
-    .countdown b{ font-weight: 800; }
+    .countdown::after{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: linear-gradient(110deg,
+        rgba(255,255,255,0.00) 20%,
+        rgba(255,255,255,0.35) 40%,
+        rgba(255,255,255,0.00) 60%);
+      transform: translateX(-120%);
+      animation: shimmer 3.2s ease-in-out infinite;
+      pointer-events:none;
+    }
+    @keyframes shimmer{
+      0%{ transform: translateX(-120%); }
+      55%{ transform: translateX(120%); }
+      100%{ transform: translateX(120%); }
+    }
+    @keyframes cdPulse{
+      0%,100%{ transform: scale(1); }
+      50%{ transform: scale(1.035); }
+    }
+    .countdown b{ font-weight: 900; }
     .countdown .dot{ opacity: 0.85; }
+    .cd-heart{
+      display:inline-block;
+      animation: heartBeat 1.25s ease-in-out infinite;
+      transform-origin: center;
+      filter: drop-shadow(0 10px 14px rgba(0,0,0,0.15));
+    }
+    @keyframes heartBeat{
+      0%,100%{ transform: scale(1); }
+      50%{ transform: scale(1.18); }
+    }
 
     .pickup{
       font-size: 1.08rem;
@@ -336,11 +370,19 @@
       .hearts span, .confetti span, .card, .love { animation: none !important; }
       #yesBtn { transition: none !important; }
       .mem p{ transition: none !important; }
+      .countdown{ animation: none !important; }
+      .countdown::after{ animation: none !important; }
+      .cd-heart{ animation: none !important; }
     }
   </style>
 </head>
 
 <body>
+  <!-- ✅ MP3 (place song.mp3 in same folder as index.html) -->
+  <audio id="bgMusic" preload="auto" loop>
+    <source src="song.mp3" type="audio/mpeg" />
+  </audio>
+
   <div class="hearts" id="hearts" aria-hidden="true"></div>
 
   <div class="page">
@@ -356,7 +398,8 @@
 
       <!-- ✅ Countdown (Sydney time) -->
       <div class="countdown" aria-live="polite">
-        <span>⏳ Valentine’s in</span>
+        <span class="cd-heart">💖</span>
+        <span>Valentine’s in</span>
         <span class="dot">•</span>
         <span><b id="cdDays">--</b>d</span>
         <span><b id="cdHours">--</b>h</span>
@@ -410,6 +453,9 @@
     const noteText = document.getElementById("noteText");
     const heartsLayer = document.getElementById("hearts");
 
+    // ✅ MP3 element
+    const bgMusic = document.getElementById("bgMusic");
+
     // Countdown DOM
     const cdDays = document.getElementById("cdDays");
     const cdHours = document.getElementById("cdHours");
@@ -450,7 +496,7 @@
     for (let i = 0; i < 16; i++) setTimeout(createFloatingHeart, i * 200);
     setInterval(createFloatingHeart, 420);
 
-    /* ✅ Audio */
+    /* ✅ Short UI sounds (optional) */
     let audioCtx = null;
     function getCtx(){
       if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -638,12 +684,12 @@
       teleportInsideBox();
     }, { passive: false });
 
-    /* ✅ Memory carousel */
+    /* ✅ Memory carousel (FIXED commas) */
     const memories = [
       "I love your laugh.",
       "I love how you care.",
       "I love the way you look at me.",
-      "I love how you roll your eyes at me."
+      "I love how you roll your eyes at me.",
       "I love how you beat me up."
     ];
 
@@ -656,7 +702,6 @@
         if (i >= memories.length) return;
 
         memLine.classList.remove("show");
-        // small delay so transition resets
         setTimeout(() => {
           memLine.textContent = "💗 " + memories[i];
           memLine.classList.add("show");
@@ -669,9 +714,20 @@
       showNext();
     }
 
-    yesBtn.addEventListener("click", () => {
+    /* ✅ YES click: play song.mp3 + show love + memories */
+    yesBtn.addEventListener("click", async () => {
+      // Start MP3 (reliable on mobile because user clicked)
+      try{
+        bgMusic.volume = 0.85;
+        await bgMusic.play();
+      }catch(e){
+        // If something blocks it, page still works
+      }
+
+      // Optional celebration sounds (remove if you want only MP3)
       clapSound();
       chimeSound();
+
       confettiBurst();
 
       question.style.display = "none";
@@ -706,7 +762,7 @@
       const mm = Number(get("minute"));
       const ss = Number(get("second"));
 
-      // Construct a Date that represents the same wall-clock time.
+      // Represent Sydney wall-clock time in a Date object
       return new Date(y, m - 1, d, hh, mm, ss);
     }
 
@@ -714,10 +770,8 @@
       const nowSydney = getSydneyNow();
       const year = nowSydney.getFullYear();
 
-      // Target: Feb 14, 00:00:00 Sydney time (wall-clock)
+      // Feb 14 00:00 Sydney time
       let target = new Date(year, 1, 14, 0, 0, 0);
-
-      // If already past this year's Valentine's, use next year
       if (nowSydney.getTime() >= target.getTime()){
         target = new Date(year + 1, 1, 14, 0, 0, 0);
       }
