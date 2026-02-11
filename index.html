@@ -8,26 +8,36 @@
   <style>
     * { box-sizing: border-box; }
 
+    html, body {
+      height: 100%;
+    }
+
     body{
       margin: 0;
-      min-height: 100vh;          /* ✅ allow page to grow */
-      padding: 24px 0;            /* ✅ nicer scroll spacing */
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      min-height: 100vh;
+      padding: 28px 14px;
       background: linear-gradient(135deg, #ff6f91, #ff9a9e);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: white;
-      overflow-y: auto;           /* ✅ enable scrolling */
+      overflow-y: auto;                 /* ✅ scroll enabled */
       -webkit-overflow-scrolling: touch;
     }
 
+    /* ✅ Center card, but allow scrolling */
+    .page {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;          /* ✅ key: not locked center */
+      padding-top: 18px;
+    }
+
     .card{
-      width: 92%;
-      max-width: 460px;
+      width: 94%;
+      max-width: 480px;
       background: rgba(255, 255, 255, 0.25);
       backdrop-filter: blur(18px);
-      border-radius: 32px;
+      border-radius: 34px;
       padding: 46px 34px;
       text-align: center;
       box-shadow: 0 35px 70px rgba(0,0,0,0.3);
@@ -35,11 +45,11 @@
     }
 
     @keyframes appear{
-      from{ opacity: 0; transform: translateY(35px) scale(0.95); }
+      from{ opacity: 0; transform: translateY(25px) scale(0.98); }
       to{ opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    /* ✅ Bigger images */
+    /* ✅ BIG FRONT IMAGES */
     .photo-wrap{
       display: flex;
       flex-direction: column;
@@ -49,26 +59,26 @@
     }
 
     .profile-pic{
-      width: 190px;               /* ✅ bigger main pic */
-      height: 190px;
+      width: 230px;                     /* ✅ bigger main */
+      height: 230px;
       border-radius: 50%;
       object-fit: cover;
-      border: 4px solid rgba(255,255,255,0.78);
+      border: 5px solid rgba(255,255,255,0.78);
       box-shadow: 0 18px 44px rgba(255,255,255,0.42);
     }
 
     .mini-photos{
       display: flex;
-      gap: 16px;
+      gap: 18px;
       justify-content: center;
     }
 
     .mini-pic{
-      width: 92px;                /* ✅ bigger mini pics */
-      height: 92px;
+      width: 120px;                     /* ✅ bigger mini */
+      height: 120px;
       object-fit: cover;
-      border-radius: 22px;
-      border: 3px solid rgba(255,255,255,0.72);
+      border-radius: 26px;
+      border: 4px solid rgba(255,255,255,0.72);
       box-shadow: 0 12px 26px rgba(0,0,0,0.18);
     }
 
@@ -81,17 +91,18 @@
     .pickup{
       font-size: 1.08rem;
       line-height: 1.55;
-      margin: 0 0 34px;
+      margin: 0 0 30px;
       opacity: 0.95;
     }
 
+    /* ✅ No button moves ONLY inside this area */
     .buttons{
       position: relative;
-      height: 110px;
+      height: 130px;
+      margin-top: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 14px;
     }
 
     button{
@@ -108,6 +119,7 @@
       color: white;
       box-shadow: 0 14px 28px rgba(255,47,109,0.55);
       transition: transform 0.15s ease, box-shadow 0.15s ease;
+      z-index: 2;
     }
 
     #yesBtn:hover{
@@ -118,14 +130,16 @@
     #noBtn{
       background: white;
       color: #ff2f6d;
-      position: absolute;
+      position: absolute;              /* ✅ inside buttons only */
       left: 58%;
-      top: 0;
+      top: 18px;
       box-shadow: 0 12px 22px rgba(0,0,0,0.25);
+      z-index: 3;
     }
 
     .love{
       display: none;
+      margin-top: 10px;
       animation: fadeUp 1.2s ease forwards;
     }
 
@@ -139,19 +153,14 @@
       margin: 8px 0 10px;
     }
 
-    .love .sub{
-      opacity: 0.95;
-      margin: 0 0 12px;
-    }
-
     .couple-pic{
       width: 100%;
-      max-width: 360px;
-      height: 230px;
+      max-width: 390px;
+      height: 250px;
       object-fit: cover;
-      border-radius: 22px;
+      border-radius: 24px;
       margin: 12px auto 18px;
-      border: 3px solid rgba(255,255,255,0.75);
+      border: 4px solid rgba(255,255,255,0.75);
       box-shadow: 0 18px 45px rgba(0,0,0,0.25);
     }
 
@@ -166,54 +175,59 @@
       font-style: italic;
       opacity: 0.95;
     }
+
+    /* ✅ Make it still look good on small phones */
+    @media (max-width: 380px){
+      .profile-pic{ width: 200px; height: 200px; }
+      .mini-pic{ width: 105px; height: 105px; }
+      h1{ font-size: 2.1rem; }
+    }
   </style>
 </head>
 
 <body>
-  <div class="card">
+  <div class="page">
+    <div class="card">
 
-    <div class="photo-wrap">
-      <!-- Main photo -->
-      <img src="sahara.jpg?v=99" alt="Sahara" class="profile-pic" />
+      <div class="photo-wrap">
+        <img src="sahara.jpg?v=999" alt="Sahara" class="profile-pic" />
 
-      <!-- Two extra photos -->
-      <div class="mini-photos">
-        <img src="sahara2.jpg?v=99" alt="Sahara photo 2" class="mini-pic" />
-        <img src="sahara3.jpg?v=99" alt="Sahara photo 3" class="mini-pic" />
+        <div class="mini-photos">
+          <img src="sahara2.jpg?v=999" alt="Sahara photo 2" class="mini-pic" />
+          <img src="sahara3.jpg?v=999" alt="Sahara photo 3" class="mini-pic" />
+        </div>
       </div>
-    </div>
 
-    <h1 id="question">Will you be my Valentine? 💖</h1>
+      <h1 id="question">Will you be my Valentine? 💖</h1>
 
-    <p class="pickup" id="pickupText">
-      I made this unfair on purpose 😌
-    </p>
-
-    <div class="buttons" id="buttons">
-      <button id="yesBtn">Yes 💕</button>
-      <button id="noBtn">No 😅</button>
-    </div>
-
-    <div class="love" id="love">
-      <h2>Sahara Chloe Kirkman 💗</h2>
-      <p class="sub">Ok fine… you win 😌</p>
-
-      <!-- Couple photo after YES -->
-      <img src="couple.jpg?v=99" alt="Us together" class="couple-pic" />
-
-      <p>
-        Thank you for saying yes, my love.<br>
-        You make my days brighter and my smiles wider.<br>
-        I can’t wait to make beautiful memories with you this Valentine’s.
+      <p class="pickup" id="pickupText">
+        I made this unfair on purpose 😌
       </p>
 
-      <p class="signature">
-        Always yours,<br>
-        <strong>Gagan</strong><br>
-        ❤️
-      </p>
-    </div>
+      <div class="buttons" id="buttons">
+        <button id="yesBtn">Yes 💕</button>
+        <button id="noBtn">No 😅</button>
+      </div>
 
+      <div class="love" id="love">
+        <h2>Sahara Chloe Kirkman 💗</h2>
+
+        <img src="couple.jpg?v=999" alt="Us together" class="couple-pic" />
+
+        <p>
+          Thank you for saying yes, my love.<br>
+          You make my days brighter and my smiles wider.<br>
+          I can’t wait to make beautiful memories with you this Valentine’s.
+        </p>
+
+        <p class="signature">
+          Always yours,<br>
+          <strong>Gagan</strong><br>
+          ❤️
+        </p>
+      </div>
+
+    </div>
   </div>
 
   <script>
@@ -224,26 +238,28 @@
     const love = document.getElementById("love");
     const pickupText = document.getElementById("pickupText");
 
-    function teleportNoButton(){
-      const maxX = window.innerWidth - noBtn.offsetWidth;
-      const maxY = window.innerHeight - noBtn.offsetHeight;
+    function teleportInsideBox(){
+      const box = buttons.getBoundingClientRect();
+      const bw = buttons.clientWidth;
+      const bh = buttons.clientHeight;
 
-      // Make it "far": avoid the middle-ish area a bit
-      let x = Math.random() * maxX;
-      let y = Math.random() * maxY;
+      const maxX = bw - noBtn.offsetWidth;
+      const maxY = bh - noBtn.offsetHeight;
 
-      noBtn.style.transition = "none"; // instant
+      // jump far: random within the box
+      const x = Math.random() * maxX;
+      const y = Math.random() * maxY;
+
+      noBtn.style.transition = "none";
       noBtn.style.left = x + "px";
       noBtn.style.top  = y + "px";
     }
 
-    // Desktop hover
-    noBtn.addEventListener("mouseenter", teleportNoButton);
+    noBtn.addEventListener("mouseenter", teleportInsideBox);
 
-    // Mobile tap
     noBtn.addEventListener("touchstart", (e) => {
       e.preventDefault();
-      teleportNoButton();
+      teleportInsideBox();
     }, { passive: false });
 
     yesBtn.addEventListener("click", () => {
@@ -251,7 +267,6 @@
       buttons.style.display = "none";
       pickupText.style.display = "none";
       love.style.display = "block";
-      // Scroll to the love section smoothly (helps on smaller screens)
       love.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   </script>
