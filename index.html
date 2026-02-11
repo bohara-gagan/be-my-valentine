@@ -8,27 +8,34 @@
   <style>
     * { box-sizing: border-box; }
 
-    html, body {
-      height: 100%;
-    }
+    html, body { height: 100%; }
 
+    /* ✅ FIXED FULL-PAGE GRADIENT (no color bands) */
     body{
       margin: 0;
       min-height: 100vh;
       padding: 28px 14px;
-      background: linear-gradient(135deg, #ff6f91, #ff9a9e);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: white;
-      overflow-y: auto;                 /* ✅ scroll enabled */
+      overflow-y: auto;
       -webkit-overflow-scrolling: touch;
+      position: relative;
+      background: #ff7b98; /* fallback */
+    }
+    body::before{
+      content:"";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: linear-gradient(135deg, #ff6f91, #ff9a9e);
     }
 
-    /* ✅ Center card, but allow scrolling */
-    .page {
+    /* ✅ center but allow scroll */
+    .page{
       min-height: 100vh;
       display: flex;
       justify-content: center;
-      align-items: flex-start;          /* ✅ key: not locked center */
+      align-items: flex-start;
       padding-top: 18px;
     }
 
@@ -49,7 +56,6 @@
       to{ opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    /* ✅ BIG FRONT IMAGES */
     .photo-wrap{
       display: flex;
       flex-direction: column;
@@ -59,7 +65,7 @@
     }
 
     .profile-pic{
-      width: 230px;                     /* ✅ bigger main */
+      width: 230px;
       height: 230px;
       border-radius: 50%;
       object-fit: cover;
@@ -74,7 +80,7 @@
     }
 
     .mini-pic{
-      width: 120px;                     /* ✅ bigger mini */
+      width: 120px;
       height: 120px;
       object-fit: cover;
       border-radius: 26px;
@@ -91,11 +97,16 @@
     .pickup{
       font-size: 1.08rem;
       line-height: 1.55;
-      margin: 0 0 30px;
+      margin: 0 0 10px;
       opacity: 0.95;
     }
 
-    /* ✅ No button moves ONLY inside this area */
+    .tiny-note{
+      font-size: 0.95rem;
+      opacity: 0.9;
+      margin: 0 0 26px;
+    }
+
     .buttons{
       position: relative;
       height: 130px;
@@ -130,11 +141,18 @@
     #noBtn{
       background: white;
       color: #ff2f6d;
-      position: absolute;              /* ✅ inside buttons only */
+      position: absolute;
       left: 58%;
       top: 18px;
       box-shadow: 0 12px 22px rgba(0,0,0,0.25);
       z-index: 3;
+    }
+
+    .fade-out{
+      opacity: 0;
+      transform: scale(0.85);
+      pointer-events: none;
+      transition: opacity .25s ease, transform .25s ease;
     }
 
     .love{
@@ -176,7 +194,6 @@
       opacity: 0.95;
     }
 
-    /* ✅ Make it still look good on small phones */
     @media (max-width: 380px){
       .profile-pic{ width: 200px; height: 200px; }
       .mini-pic{ width: 105px; height: 105px; }
@@ -190,19 +207,17 @@
     <div class="card">
 
       <div class="photo-wrap">
-        <img src="sahara.jpg?v=999" alt="Sahara" class="profile-pic" />
-
+        <img src="sahara.jpg?v=555" alt="Sahara" class="profile-pic" />
         <div class="mini-photos">
-          <img src="sahara2.jpg?v=999" alt="Sahara photo 2" class="mini-pic" />
-          <img src="sahara3.jpg?v=999" alt="Sahara photo 3" class="mini-pic" />
+          <img src="sahara2.jpg?v=555" alt="Sahara photo 2" class="mini-pic" />
+          <img src="sahara3.jpg?v=555" alt="Sahara photo 3" class="mini-pic" />
         </div>
       </div>
 
       <h1 id="question">Will you be my Valentine? 💖</h1>
 
-      <p class="pickup" id="pickupText">
-        I made this unfair on purpose 😌
-      </p>
+      <p class="pickup" id="pickupText">I made this unfair on purpose 😌</p>
+      <p class="tiny-note" id="noteText"></p>
 
       <div class="buttons" id="buttons">
         <button id="yesBtn">Yes 💕</button>
@@ -212,7 +227,7 @@
       <div class="love" id="love">
         <h2>Sahara Chloe Kirkman 💗</h2>
 
-        <img src="couple.jpg?v=999" alt="Us together" class="couple-pic" />
+        <img src="couple.jpg?v=555" alt="Us together" class="couple-pic" />
 
         <p>
           Thank you for saying yes, my love.<br>
@@ -237,26 +252,39 @@
     const buttons = document.getElementById("buttons");
     const love = document.getElementById("love");
     const pickupText = document.getElementById("pickupText");
+    const noteText = document.getElementById("noteText");
+
+    let dodges = 0;
+    const maxDodges = 6; // ✅ disappears after this many dodges
 
     function teleportInsideBox(){
-      const box = buttons.getBoundingClientRect();
+      if (dodges >= maxDodges) return;
+
       const bw = buttons.clientWidth;
       const bh = buttons.clientHeight;
 
       const maxX = bw - noBtn.offsetWidth;
       const maxY = bh - noBtn.offsetHeight;
 
-      // jump far: random within the box
-      const x = Math.random() * maxX;
-      const y = Math.random() * maxY;
+      const x = Math.random() * Math.max(0, maxX);
+      const y = Math.random() * Math.max(0, maxY);
 
       noBtn.style.transition = "none";
       noBtn.style.left = x + "px";
       noBtn.style.top  = y + "px";
+
+      dodges++;
+
+      if (dodges === 3) noteText.textContent = "Okay okay… you’re persistent 😭";
+      if (dodges === 5) noteText.textContent = "Last chance 😌";
+
+      if (dodges >= maxDodges) {
+        noteText.textContent = "Fine. You win 😌";
+        noBtn.classList.add("fade-out"); // ✅ disappears
+      }
     }
 
     noBtn.addEventListener("mouseenter", teleportInsideBox);
-
     noBtn.addEventListener("touchstart", (e) => {
       e.preventDefault();
       teleportInsideBox();
@@ -266,6 +294,7 @@
       question.style.display = "none";
       buttons.style.display = "none";
       pickupText.style.display = "none";
+      noteText.style.display = "none";
       love.style.display = "block";
       love.scrollIntoView({ behavior: "smooth", block: "start" });
     });
